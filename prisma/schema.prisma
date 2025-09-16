@@ -1,0 +1,107 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              String           @id @default(uuid())
+  name            String
+  email           String           @unique
+  passwordHash    String
+  avatarUrl       String?
+  jobApplications JobApplication[]
+  resumes         ResumeVersion[]
+  coverLetters    CoverLetter[]
+  subscriptions   Subscription[]
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+}
+
+model JobApplication {
+  id            String             @id @default(uuid())
+  user          User               @relation(fields: [userId], references: [id])
+  userId        String
+  title         String
+  company       String
+  jobLink       String?
+  description   String?
+  status        JobStatus
+  appliedAt     DateTime?
+  notes         ApplicationNote[]
+  resumes       ResumeVersion[]
+  coverLetters  CoverLetter[]
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+}
+
+model ApplicationNote {
+  id        String          @id @default(uuid())
+  job       JobApplication  @relation(fields: [jobId], references: [id])
+  jobId     String
+  note      String
+  createdAt DateTime        @default(now())
+}
+
+model ResumeVersion {
+  id            String          @id @default(uuid())
+  user          User            @relation(fields: [userId], references: [id])
+  userId        String
+  job           JobApplication? @relation(fields: [jobId], references: [id])
+  jobId         String?
+  content       String
+  isAiGenerated Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+}
+
+model CoverLetter {
+  id            String          @id @default(uuid())
+  user          User            @relation(fields: [userId], references: [id])
+  userId        String
+  job           JobApplication? @relation(fields: [jobId], references: [id])
+  jobId         String?
+  content       String
+  isAiGenerated Boolean         @default(true)
+  createdAt     DateTime        @default(now())
+}
+
+model Subscription {
+  id                 String     @id @default(uuid())
+  user               User       @relation(fields: [userId], references: [id])
+  userId             String     @unique
+  plan               Plan
+  status             SubscriptionStatus
+  currentPeriodStart DateTime?
+  currentPeriodEnd   DateTime?
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+}
+
+enum JobStatus {
+  applied
+  interviewing
+  offer
+  rejected
+}
+
+enum Plan {
+  free
+  pro
+  enterprise
+}
+
+enum SubscriptionStatus {
+  active
+  canceled
+  past_due
+}
