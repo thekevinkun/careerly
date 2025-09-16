@@ -47,7 +47,7 @@ model JobApplication {
 
 model ApplicationNote {
   id        String          @id @default(uuid())
-  job       JobApplication  @relation(fields: [jobId], references: [id])
+  job       JobApplication  @relation(fields: [jobId], references: [id], onDelete: Cascade)
   jobId     String
   note      String
   createdAt DateTime        @default(now())
@@ -57,7 +57,7 @@ model ResumeVersion {
   id            String          @id @default(uuid())
   user          User            @relation(fields: [userId], references: [id])
   userId        String
-  job           JobApplication? @relation(fields: [jobId], references: [id])
+  job           JobApplication? @relation(fields: [jobId], references: [id], onDelete: Cascade)
   jobId         String?
   content       String
   isAiGenerated Boolean         @default(true)
@@ -68,7 +68,7 @@ model CoverLetter {
   id            String          @id @default(uuid())
   user          User            @relation(fields: [userId], references: [id])
   userId        String
-  job           JobApplication? @relation(fields: [jobId], references: [id])
+  job           JobApplication? @relation(fields: [jobId], references: [id], onDelete: Cascade)
   jobId         String?
   content       String
   isAiGenerated Boolean         @default(true)
@@ -77,7 +77,7 @@ model CoverLetter {
 
 model Subscription {
   id                 String     @id @default(uuid())
-  user               User       @relation(fields: [userId], references: [id])
+  user               User       @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId             String     @unique
   plan               Plan
   status             SubscriptionStatus
