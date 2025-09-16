@@ -1,17 +1,19 @@
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+
+import { authOptions } from "../auth/[...nextauth]/route";
 import { prisma } from "@/lib/prisma";
 
 // GET /api/jobs → user logged in jobs
 export async function GET(req: Request) {
-  const { searchParams } = new URL(req.url);
-  const userId = searchParams.get("userId");
+  const session = await getServerSession(authOptions);
 
-  if (!userId) {
-    return NextResponse.json({ error: "userId is required" }, { status: 400 });
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const jobs = await prisma.jobApplication.findMany({
-    where: { userId },
+    where: { userId: session.user.id },
     include: {
       notes: true,
       resumes: true,
@@ -24,11 +26,17 @@ export async function GET(req: Request) {
 
 // POST /api/jobs → create new job
 export async function POST(req: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await req.json();
 
   const newJob = await prisma.jobApplication.create({
     data: {
-      userId: body.userId,
+      userId: session.user.id,
       title: body.title,
       company: body.company,
       jobLink: body.jobLink,
@@ -45,7 +53,7 @@ export async function POST(req: Request) {
             create: body.resumes.map((resume: any) => ({
               content: resume.content,
               isAiGenerated: resume.isAiGenerated ?? false,
-              userId: body.userId,
+              userId: session.user.id,
             })),
           }
         : undefined,
@@ -55,7 +63,7 @@ export async function POST(req: Request) {
             create: body.coverLetters.map((cl: any) => ({
               content: cl.content,
               isAiGenerated: cl.isAiGenerated ?? false,
-              userId: body.userId,
+              userId: session.user.id,
             })),
           }
         : undefined,
