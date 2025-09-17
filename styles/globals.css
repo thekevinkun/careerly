@@ -1,54 +1,69 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Fonts */
 :root {
   --font-sans: var(--font-inter);
   --font-display: var(--font-poppins);
 }
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  @apply antialiased;
-}
-
+/* Height fix */
 html, body {
   height: 100%;
 }
 
-body {
-  background-color: hsl(var(--background));
-  color: hsl(var(--foreground));
-  font-family: var(--font-sans), sans-serif;
-}
-
-.logo {
-  font-family: var(--font-display), sans-serif;
+/* Map design tokens to Tailwind theme */
+@theme {
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
 }
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 47.4% 11.2%;
+    --background: 0 0% 100%;              /* white */
+    --foreground: 158 47% 12%;            /* deep emerald text */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 47.4% 11.2%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --card-foreground: 158 47% 12%;
+    --primary: 160 84% 39%;               /* Emerald 600 */
+    --primary-foreground: 0 0% 100%;      /* white */
+    --secondary: 160 44% 92%;             /* Emerald 100 */
+    --secondary-foreground: 160 84% 20%;  /* Emerald 800 */
+    --muted: 160 44% 92%;                 /* light emerald */
+    --muted-foreground: 158 24% 40%;      /* muted text */
     --radius: 0.5rem;
   }
 
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-sans), sans-serif;
+  }
+
+  .logo {
+    font-family: var(--font-display), sans-serif;
+  }
+
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --background: 160 47% 8%;             /* Emerald 950 */
+    --foreground: 0 0% 100%;
+    --card: 160 47% 10%;
+    --card-foreground: 0 0% 100%;
+    --primary: 160 84% 39%;               /* Emerald 600 stays */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 160 47% 20%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 160 47% 20%;
+    --muted-foreground: 160 47% 70%;
   }
 }
 
@@ -58,6 +73,9 @@ body {
   }
   .col-center {
     @apply flex flex-col justify-center items-center;
+  }
+  .flex-between {
+    @apply flex justify-between items-center;
   }
   .abs-center {
     @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2;
