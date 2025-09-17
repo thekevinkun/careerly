@@ -18,8 +18,8 @@ export async function POST(req: Request) {
     }
 
     // Validate password
-    if (!password || password.length < 6 || password.length > 8) {
-      return new NextResponse("Password must be 6–8 characters long", { status: 400 });
+    if (!password || password.length < 8) {
+      return new NextResponse("Password must be at least 8 characters long", { status: 400 });
     }
 
     // 🚫 Check duplicate email
