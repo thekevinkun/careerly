@@ -73,7 +73,7 @@ const LoginPage = () => {
               />
             </div>
 
-            {error && <div className="text-sm text-red-500 font-medium">{error}</div>}
+            {error && <div className="text-sm text-destructive font-medium">{error}</div>}
 
             <Button 
                 type="submit" 

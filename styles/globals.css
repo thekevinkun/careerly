@@ -24,6 +24,20 @@ html, body {
   --color-secondary-foreground: hsl(var(--secondary-foreground));
   --color-muted: hsl(var(--muted));
   --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+  --color-success: hsl(var(--success));
+  --color-success-foreground: hsl(var(--success-foreground));
+  --color-warning: hsl(var(--warning));
+  --color-warning-foreground: hsl(var(--warning-foreground));
+  --color-info: hsl(var(--info));
+  --color-info-foreground: hsl(var(--info-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
@@ -41,6 +55,23 @@ html, body {
     --secondary-foreground: 160 84% 20%;  /* Emerald 800 */
     --muted: 160 44% 92%;                 /* light emerald */
     --muted-foreground: 158 24% 40%;      /* muted text */
+
+    --destructive: 0 78% 48%;                  /* red */
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 160 84% 39%;                    /* emerald (offer) */
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;                     /* amber (interview) */
+    --warning-foreground: 222.2 47.4% 11.2%;
+
+    --info: 187 100% 39%;                      /* cyan (applied) */
+    --info-foreground: 0 0% 100%;
+
+    /* UI tokens */
+    --border: 210 16% 92%;
+    --input: 210 16% 96%;
+    --ring: 160 84% 30%; /* subtle emerald ring */
     --radius: 0.5rem;
   }
 
@@ -48,11 +79,9 @@ html, body {
     @apply bg-background text-foreground antialiased;
     font-family: var(--font-sans), sans-serif;
   }
-
   .logo {
     font-family: var(--font-display), sans-serif;
   }
-
   .dark {
     --background: 160 47% 8%;             /* Emerald 950 */
     --foreground: 0 0% 100%;
@@ -64,6 +93,17 @@ html, body {
     --secondary-foreground: 0 0% 100%;
     --muted: 160 47% 20%;
     --muted-foreground: 160 47% 70%;
+    --destructive: 0 78% 48%;
+    --destructive-foreground: 0 0% 100%;
+
+    --success: 160 84% 39%;
+    --success-foreground: 0 0% 100%;
+
+    --warning: 38 92% 50%;
+    --warning-foreground: 0 0% 100%;
+
+    --info: 187 100% 39%;
+    --info-foreground: 0 0% 100%;
   }
 }
 
