@@ -2,8 +2,8 @@
 
 import { useMemo } from "react";
 import useSWR from "swr";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import AddJobForm from "@/components/dashboard/AddJobForm";
 import LogoutButton from "@/components/LogoutButton";
 
 import { Job, JobStatus } from "@/types/job";
@@ -39,9 +39,7 @@ const Sidebar = () => {
     <aside className="w-64 bg-card border-r flex flex-col p-6">
       <h1 className="logo text-2xl font-bold text-primary mb-8">Careerly</h1>
 
-      <Button className="w-full mb-6 bg-primary text-primary-foreground hover:opacity-90">
-        + Add Job
-      </Button>
+      <AddJobForm />
 
       <nav className="space-y-2 text-sm">
         {["Applied", "Interviewing", "Offer", "Rejected"].map((status) => {
