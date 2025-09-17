@@ -2,6 +2,7 @@
 
 import useSWR from "swr";
 import moment from "moment";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -11,12 +12,13 @@ import {
   TableHead,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
+
+import { Job } from "@/types/job";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-export default function JobList() {
-  const { data, error, mutate } = useSWR("/api/jobs", fetcher);
+const JobList = () => {
+  const { data, error, mutate } = useSWR<Job[]>("/api/jobs", fetcher);
 
   const router = useRouter();
 
@@ -51,7 +53,7 @@ export default function JobList() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((job: any) => (
+          {data.map((job: Job) => (
             <TableRow key={job.id}>
               <TableCell>{job.title}</TableCell>
               <TableCell>{job.company}</TableCell>
@@ -95,4 +97,6 @@ export default function JobList() {
       </Table>
     </div>
   );
-}
+};
+
+export default JobList;
