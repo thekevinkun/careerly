@@ -1,15 +1,16 @@
+import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
 
 async function main() {
   // Create user
   const user = await prisma.user.upsert({
-    where: { email: "kevinitsnovember@gmail.com" },
+    where: { email: "rhayanasafaelia@gmail.com" },
     update: {},
     create: {
-      name: "Kevin Mahendra",
-      email: "kevinitsnovember@gmail.com",
-      passwordHash: "1234567890",
-      avatarUrl: "https://i.pravatar.cc/150?u=kevin",
+      name: "Rhayana Safaelia",
+      email: "rhayanasafaelia@gmail.com",
+      passwordHash: await bcrypt.hash("matahari0676", 10),
+      avatarUrl: "https://i.pravatar.cc/150?u=rayya",
     },
   });
 
