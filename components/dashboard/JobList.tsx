@@ -68,7 +68,7 @@ const JobList = () => {
               </TableCell>
               <TableCell>
                 {job.appliedAt
-                  ? moment(job.appliedAt).format("MMM D, YYYY")
+                  ? moment(job.appliedAt).local().format("MMM D, YYYY")
                   : "-"}
               </TableCell>
               <TableCell className="text-right space-x-2">
