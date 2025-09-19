@@ -9,31 +9,34 @@ import NotesSection from "./NotesSection";
 
 const MainContent = () => {
   const searchParams = useSearchParams();
-  
+
   const selectedJobId = searchParams.get("job") || null;
 
   return (
-    <main className="flex-1 h-screen p-6 grid grid-cols-3 grid-rows-[auto_1fr] gap-6">
-      {/* Job applications */}
-      <section className="col-span-2 overflow-y-auto">
-        <Card className="h-full flex flex-col">
-          <CardHeader>
-            <CardTitle>Job Applications</CardTitle>
-          </CardHeader>
-          <CardContent className="flex-1 overflow-y-auto">
-            <JobList selectedJobId={selectedJobId} />
-          </CardContent>
-        </Card>
-      </section>
+    <main className="flex-1 h-screen pt-6 pb-3 px-6 grid grid-rows-[1fr_32%] gap-6">
+      {/* Top row: job applications + right panel */}
+      <div className="grid grid-cols-3 gap-6 overflow-hidden">
+        {/* Job applications */}
+        <section className="col-span-2 flex flex-col">
+          <Card className="h-full flex flex-col">
+            <CardHeader>
+              <CardTitle>Job Applications</CardTitle>
+            </CardHeader>
+            <CardContent className="flex-1 overflow-y-auto">
+              <JobList selectedJobId={selectedJobId} />
+            </CardContent>
+          </Card>
+        </section>
 
-      {/* Right Panel */}
-      <section className="col-span-1 overflow-y-auto">
-        <RightPanel />
-      </section>
+        {/* Right Panel */}
+        <section className="col-span-1 flex flex-col">
+          <RightPanel />
+        </section>
+      </div>
 
-      {/* Notes at bottom */}
-      <section className="col-span-3 overflow-y-auto">
-        <NotesSection selectedJobId={selectedJobId}/>
+      {/* Bottom row: Notes */}
+      <section className="overflow-hidden">
+        <NotesSection selectedJobId={selectedJobId} />
       </section>
     </main>
   );

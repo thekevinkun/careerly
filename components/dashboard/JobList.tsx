@@ -3,6 +3,10 @@
 import useSWR from "swr";
 import moment from "moment";
 import { useRouter } from "next/navigation";
+
+import { Eye } from "lucide-react";
+import { Trash2 } from "lucide-react";
+
 import {
   Table,
   TableBody,
@@ -54,18 +58,21 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
         </TableHeader>
         <TableBody>
           {data.map((job: Job) => (
-            <TableRow 
-              key={job.id} 
+            <TableRow
+              key={job.id}
               className={`
-                cursor-pointer hover:bg-muted/50
-                ${selectedJobId === job.id && "bg-muted"}`
-              }
+                cursor-pointer hover:bg-muted/50 
+                ${selectedJobId === job.id && "bg-muted"}`}
               onClick={() => {
                 router.push(`?job=${job.id}`, { scroll: false });
               }}
             >
-              <TableCell>{job.title}</TableCell>
-              <TableCell>{job.company}</TableCell>
+              <TableCell title={job.title} className="max-w-[150px] truncate">
+                {job.title}
+              </TableCell>
+              <TableCell title={job.company} className="max-w-[150px] truncate">
+                {job.company}
+              </TableCell>
               <TableCell>
                 <span
                   className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusClass(
@@ -86,7 +93,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                   size="sm"
                   onClick={() => router.push(`/dashboard/jobs/${job.id}`)}
                 >
-                  View
+                  <Eye />
                 </Button>
                 <Button
                   variant="destructive"
@@ -97,7 +104,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                     mutate(); // refresh list
                   }}
                 >
-                  Delete
+                  <Trash2 />
                 </Button>
               </TableCell>
             </TableRow>

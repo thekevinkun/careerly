@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import moment from "moment";
 import useSWR from "swr";
+
+import { Trash2 } from "lucide-react";
+
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import moment from "moment";
 
 import { Note, NotesSectionProps } from "@/types/dashboard";
 
@@ -19,6 +22,7 @@ const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
   );
 
   const [newNote, setNewNote] = useState("");
+  const [showNoteInput, setShowNoteInput] = useState(false);
   const [loading, setLoading] = useState(false);
 
   const handleAddNote = async () => {
@@ -40,48 +44,104 @@ const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
     }
   };
 
+  useEffect(() => {
+    setShowNoteInput(false);
+  }, [selectedJobId, notes]);
+
   return (
-    <Card className="mt-2">
+    <Card className="relative h-full flex flex-col">
       <CardHeader>
         <CardTitle>Notes</CardTitle>
       </CardHeader>
 
-      <CardContent>
+      {!showNoteInput && notes && selectedJobId && notes.length > 0 && (
+        <div className="absolute top-0 right-0 p-3.5">
+          <Button
+            size="sm"
+            onClick={() => setShowNoteInput(true)}
+            disabled={loading}
+            className="text-lg py-3.5 cursor-pointer"
+          >
+            +
+          </Button>
+        </div>
+      )}
+
+      <CardContent className="flex-1 flex flex-col overflow-hidden">
         {!selectedJobId ? (
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="flex-1 flex-center text-muted-foreground">
             Select a job to view notes
           </div>
         ) : (
           <>
-            {(!notes || notes.length === 0) && (
-              <p className="text-sm text-muted-foreground">
-                No notes yet. Add your first one below.
-              </p>
-            )}
+            <div className="flex-1 overflow-y-auto pr-2">
+              {(!notes || notes.length === 0) && (
+                <>
+                  <p className="text-sm text-muted-foreground">
+                    No notes yet. Add your first one below.
+                  </p>
 
-            <Table>
-              <TableBody>
-                {notes?.map((note) => (
-                  <TableRow key={note.id}>
-                    <TableCell>{note.note}</TableCell>
-                    <TableCell className="text-right text-muted-foreground">
-                      {moment(note.createdAt).format("MMM D, YYYY")}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                  <div className="flex items-center gap-2 mt-4">
+                    <Input
+                      value={newNote}
+                      onChange={(e) => setNewNote(e.target.value)}
+                      placeholder="Write a note..."
+                    />
+                    <Button onClick={handleAddNote} disabled={loading}>
+                      Add
+                    </Button>
+                  </div>
+                </>
+              )}
 
-            <div className="flex items-center gap-2 mt-4">
-              <Input
-                value={newNote}
-                onChange={(e) => setNewNote(e.target.value)}
-                placeholder="Write a note..."
-              />
-              <Button onClick={handleAddNote} disabled={loading}>
-                Add
-              </Button>
+              <Table>
+                <TableBody>
+                  {notes?.map((note) => (
+                    <TableRow key={note.id}>
+                      <TableCell>{note.note}</TableCell>
+                      <TableCell className="text-right text-muted-foreground">
+                        {moment(note.createdAt).format("MMM D, YYYY")}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={async () => {
+                            if (!confirm("Delete job?")) return;
+                            await fetch(
+                              `/api/jobs/${selectedJobId}/notes/${note.id}`,
+                              { method: "DELETE" }
+                            );
+                            mutate(); // refresh list
+                          }}
+                        >
+                          <Trash2 />
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </div>
+
+            {showNoteInput && (
+              <div className="flex items-center gap-2 mt-4">
+                <Input
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                  placeholder="Write a note..."
+                />
+                <Button onClick={handleAddNote} disabled={loading}>
+                  Add
+                </Button>
+                <Button
+                  variant="destructive"
+                  onClick={() => setShowNoteInput(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
           </>
         )}
       </CardContent>
