@@ -5,7 +5,7 @@ import { authOptions } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
 // PATCH /api/jobs/:id
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: { jobId: string } }) {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -16,7 +16,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 
   // Ensure user owns this job
   const job = await prisma.jobApplication.findUnique({
-    where: { id: params.id },
+    where: { id: params.jobId },
   });
 
   if (!job || job.userId !== session.user.id) {
@@ -24,7 +24,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 
   const updatedJob = await prisma.jobApplication.update({
-    where: { id: params.id },
+    where: { id: params.jobId },
     data: {
       title: body.title,
       company: body.company,
@@ -70,7 +70,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
 // DELETE /api/jobs/:id
 export async function DELETE(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { jobId: string } }
 ) {
   const session = await getServerSession(authOptions);
 
@@ -80,7 +80,7 @@ export async function DELETE(
 
   // Check ownership first
   const job = await prisma.jobApplication.findUnique({
-    where: { id: params.id },
+    where: { id: params.jobId },
   });
 
   if (!job || job.userId !== session.user.id) {
@@ -88,7 +88,7 @@ export async function DELETE(
   }
   
   await prisma.jobApplication.delete({
-    where: { id: params.id },
+    where: { id: params.jobId },
   });
 
   return NextResponse.json({ success: true });

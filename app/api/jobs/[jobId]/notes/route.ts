@@ -4,10 +4,10 @@ import { prisma } from "@/lib/prisma";
 // GET /api/jobs/[jobId]/notes
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { jobId: string } }
 ) {
   const notes = await prisma.applicationNote.findMany({
-    where: { jobId: params.id },
+    where: { jobId: params.jobId },
     orderBy: { createdAt: "desc" },
   });
 
@@ -17,7 +17,7 @@ export async function GET(
 // POST /api/jobs/[jobId]/notes
 export async function POST(
   req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: { jobId: string } }
 ) {
   const body = await req.json();
 
@@ -28,7 +28,7 @@ export async function POST(
   const note = await prisma.applicationNote.create({
     data: {
       note: body.content,
-      jobId: params.id,
+      jobId: params.jobId,
     },
   });
 

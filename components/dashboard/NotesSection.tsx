@@ -107,7 +107,7 @@ const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
                           variant="destructive"
                           size="sm"
                           onClick={async () => {
-                            if (!confirm("Delete job?")) return;
+                            if (!confirm("Delete this note?")) return;
                             await fetch(
                               `/api/jobs/${selectedJobId}/notes/${note.id}`,
                               { method: "DELETE" }
