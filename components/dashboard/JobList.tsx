@@ -17,7 +17,7 @@ import { Job } from "@/types/job";
 
 const fetcher = (url: string) => fetch(url).then((r) => r.json());
 
-const JobList = () => {
+const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
   const { data, error, mutate } = useSWR<Job[]>("/api/jobs", fetcher);
 
   const router = useRouter();
@@ -54,7 +54,16 @@ const JobList = () => {
         </TableHeader>
         <TableBody>
           {data.map((job: Job) => (
-            <TableRow key={job.id}>
+            <TableRow 
+              key={job.id} 
+              className={`
+                cursor-pointer hover:bg-muted/50
+                ${selectedJobId === job.id && "bg-muted"}`
+              }
+              onClick={() => {
+                router.push(`?job=${job.id}`, { scroll: false });
+              }}
+            >
               <TableCell>{job.title}</TableCell>
               <TableCell>{job.company}</TableCell>
               <TableCell>
