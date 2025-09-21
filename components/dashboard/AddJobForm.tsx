@@ -64,6 +64,7 @@ const AddJobForm = () => {
 
     if (res.ok) {
       mutate("/api/jobs"); // refersh list of jobs
+      mutate("/api/jobs/status-summary"); // refersh chart
       handleClose();
     } else {
       alert("Failed to add job");

@@ -36,7 +36,7 @@ const Sidebar = () => {
   const isLoading = !data && !error;
 
   return (
-    <aside className="w-64 bg-card border-r flex flex-col p-6">
+    <aside className="w-64 bg-card border-r flex-shrink-0 flex flex-col p-6">
       <h1 className="logo text-2xl font-bold text-primary mb-8">Careerly</h1>
 
       <AddJobForm />

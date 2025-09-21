@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import { Eye } from "lucide-react";
 import { Trash2 } from "lucide-react";
 
+import { ScrollArea } from "@/components/ui/scroll-area"; 
+import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -15,11 +17,9 @@ import {
   TableHeader,
   TableHead,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 
 import { Job } from "@/types/job";
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+import { fetcher } from "@/lib/helpers";
 
 const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
   const { data, error, mutate } = useSWR<Job[]>("/api/jobs", fetcher);
@@ -45,9 +45,9 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
   };
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
+    <ScrollArea className="h-[47vh] w-full rounded-md border">
+      <Table className="w-full">
+        <TableHeader className="bg-background z-10 [&_tr]:border-b"> 
           <TableRow>
             <TableHead>Title</TableHead>
             <TableHead>Company</TableHead>
@@ -111,7 +111,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
           ))}
         </TableBody>
       </Table>
-    </div>
+    </ScrollArea>
   );
 };
 

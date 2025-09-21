@@ -13,29 +13,29 @@ const MainContent = () => {
   const selectedJobId = searchParams.get("job") || null;
 
   return (
-    <main className="flex-1 h-screen pt-6 pb-3 px-6 grid grid-rows-[1fr_32%] gap-6">
+    <main className="w-full h-screen pt-6 pb-3 px-6 grid grid-rows-[1fr_30%] gap-6">
       {/* Top row: job applications + right panel */}
       <div className="grid grid-cols-3 gap-6 overflow-hidden">
         {/* Job applications */}
-        <section className="col-span-2 flex flex-col">
-          <Card className="h-full flex flex-col">
+        <section className="col-span-2 flex flex-col min-h-0">
+          <Card className="h-full w-full flex flex-col">
             <CardHeader>
               <CardTitle>Job Applications</CardTitle>
             </CardHeader>
-            <CardContent className="flex-1 overflow-y-auto">
+            <CardContent className="flex-1">
               <JobList selectedJobId={selectedJobId} />
             </CardContent>
           </Card>
         </section>
 
         {/* Right Panel */}
-        <section className="col-span-1 flex flex-col">
+        <section className="col-span-1 flex flex-col min-h-0">
           <RightPanel />
         </section>
       </div>
 
       {/* Bottom row: Notes */}
-      <section className="overflow-hidden">
+      <section className="overflow-hidden flex flex-col">
         <NotesSection selectedJobId={selectedJobId} />
       </section>
     </main>

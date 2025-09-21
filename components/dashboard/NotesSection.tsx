@@ -12,8 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 import { Note, NotesSectionProps } from "@/types/dashboard";
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+import { fetcher } from "@/lib/helpers";
 
 const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
   const { data: notes, mutate } = useSWR<Note[]>(
@@ -49,7 +48,7 @@ const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
   }, [selectedJobId, notes]);
 
   return (
-    <Card className="relative h-full flex flex-col">
+    <Card className="relative h-full flex flex-col !gap-5">
       <CardHeader>
         <CardTitle>Notes</CardTitle>
       </CardHeader>
@@ -99,10 +98,10 @@ const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
                   {notes?.map((note) => (
                     <TableRow key={note.id}>
                       <TableCell>{note.note}</TableCell>
-                      <TableCell className="text-right text-muted-foreground">
+                      <TableCell className="text-end text-muted-foreground">
                         {moment(note.createdAt).format("MMM D, YYYY")}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="!p-1.5 text-end !w-0">
                         <Button
                           variant="destructive"
                           size="sm"
