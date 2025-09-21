@@ -62,7 +62,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
               key={job.id}
               className={`
                 cursor-pointer hover:bg-muted/50 
-                ${selectedJobId === job.id && "bg-muted"}`}
+                ${selectedJobId === job.id && "bg-muted pointer-events-none"}`}
               onClick={() => {
                 router.push(`?job=${job.id}`, { scroll: false });
               }}
@@ -87,7 +87,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                   ? moment(job.appliedAt).local().format("MMM D, YYYY")
                   : "-"}
               </TableCell>
-              <TableCell className="text-right space-x-2">
+              <TableCell className="text-right space-x-2 pointer-events-auto">
                 <Button
                   variant="outline"
                   size="sm"

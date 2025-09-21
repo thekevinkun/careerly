@@ -13,9 +13,10 @@ import { Input } from "@/components/ui/input";
 
 import { Note, NotesSectionProps } from "@/types/dashboard";
 import { fetcher } from "@/lib/helpers";
+import { ScrollArea } from "../ui/scroll-area";
 
 const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
-  const { data: notes, mutate } = useSWR<Note[]>(
+  const { data: notes, mutate, isLoading } = useSWR<Note[]>(
     selectedJobId ? `/api/jobs/${selectedJobId}/notes` : null,
     fetcher
   );
@@ -69,12 +70,16 @@ const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
       <CardContent className="flex-1 flex flex-col overflow-hidden">
         {!selectedJobId ? (
           <div className="flex-1 flex-center text-muted-foreground">
-            Select a job to view notes
+            Select a job to view notes  
           </div>
         ) : (
           <>
-            <div className="flex-1 overflow-y-auto pr-2">
-              {(!notes || notes.length === 0) && (
+            <div className="flex-1 pr-2">
+              {isLoading ? (
+                <div className="pt-5 flex-1 flex-center text-muted-foreground">
+                  Loading notes...
+                </div>
+              ) : (!notes || notes.length === 0) && (
                 <>
                   <p className="text-sm text-muted-foreground">
                     No notes yet. Add your first one below.
@@ -93,34 +98,36 @@ const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
                 </>
               )}
 
-              <Table>
-                <TableBody>
-                  {notes?.map((note) => (
-                    <TableRow key={note.id}>
-                      <TableCell>{note.note}</TableCell>
-                      <TableCell className="text-end text-muted-foreground">
-                        {moment(note.createdAt).format("MMM D, YYYY")}
-                      </TableCell>
-                      <TableCell className="!p-1.5 text-end !w-0">
-                        <Button
-                          variant="destructive"
-                          size="sm"
-                          onClick={async () => {
-                            if (!confirm("Delete this note?")) return;
-                            await fetch(
-                              `/api/jobs/${selectedJobId}/notes/${note.id}`,
-                              { method: "DELETE" }
-                            );
-                            mutate(); // refresh list
-                          }}
-                        >
-                          <Trash2 />
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <ScrollArea className="h-[14vh] w-full">
+                <Table>
+                  <TableBody>
+                    {notes?.map((note) => (
+                      <TableRow key={note.id}>
+                        <TableCell>{note.note}</TableCell>
+                        <TableCell className="text-end text-muted-foreground">
+                          {moment(note.createdAt).format("MMM D, YYYY")}
+                        </TableCell>
+                        <TableCell className="!p-1.5 !pr-2.5 text-end !w-0">
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={async () => {
+                              if (!confirm("Delete this note?")) return;
+                              await fetch(
+                                `/api/jobs/${selectedJobId}/notes/${note.id}`,
+                                { method: "DELETE" }
+                              );
+                              mutate(); // refresh list
+                            }}
+                          >
+                            <Trash2 />
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </ScrollArea>
             </div>
 
             {showNoteInput && (
