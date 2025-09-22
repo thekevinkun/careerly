@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/table";
 
 import { Job } from "@/types/job";
-import { fetcher } from "@/lib/helpers";
+import { fetcher, statusClass } from "@/lib/helpers";
 
 const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
   const { data, error, mutate } = useSWR<Job[]>("/api/jobs", fetcher);
@@ -28,21 +28,6 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
 
   if (error) return <div className="text-destructive">Failed to load jobs</div>;
   if (!data) return <div>Loading jobs...</div>;
-
-  const statusClass = (status: string) => {
-    switch (status.toLowerCase()) {
-      case "applied":
-        return "bg-info text-info-foreground";
-      case "interviewing":
-        return "bg-warning text-warning-foreground";
-      case "offer":
-        return "bg-success text-success-foreground";
-      case "rejected":
-        return "bg-destructive text-destructive-foreground";
-      default:
-        return "bg-muted text-muted-foreground";
-    }
-  };
 
   return (
     <ScrollArea className="h-[47vh] w-full rounded-md border">
@@ -87,22 +72,28 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                   ? moment(job.appliedAt).local().format("MMM D, YYYY")
                   : "-"}
               </TableCell>
-              <TableCell className="text-right space-x-2 pointer-events-auto">
+              <TableCell className="text-right space-x-2">
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => router.push(`/dashboard/jobs/${job.id}`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(`/dashboard/jobs/${job.id}`);
+                  }}
+                  className="pointer-events-auto"
                 >
                   <Eye />
                 </Button>
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={async () => {
+                  onClick={async (e) => {
+                    e.stopPropagation();
                     if (!confirm("Delete job?")) return;
                     await fetch(`/api/jobs/${job.id}`, { method: "DELETE" });
                     mutate(); // refresh list
                   }}
+                  className="pointer-events-auto"
                 >
                   <Trash2 />
                 </Button>

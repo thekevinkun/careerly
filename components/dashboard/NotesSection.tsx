@@ -11,12 +11,12 @@ import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
-import { Note, NotesSectionProps } from "@/types/dashboard";
+import { ApplicationNote, NotesSectionProps } from "@/types/job";
 import { fetcher } from "@/lib/helpers";
 import { ScrollArea } from "../ui/scroll-area";
 
 const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
-  const { data: notes, mutate, isLoading } = useSWR<Note[]>(
+  const { data: notes, mutate, isLoading } = useSWR<ApplicationNote[]>(
     selectedJobId ? `/api/jobs/${selectedJobId}/notes` : null,
     fetcher
   );

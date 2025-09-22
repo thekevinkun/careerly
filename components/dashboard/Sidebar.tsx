@@ -7,8 +7,7 @@ import AddJobForm from "@/components/dashboard/AddJobForm";
 import LogoutButton from "@/components/LogoutButton";
 
 import { Job, JobStatus } from "@/types/job";
-
-const fetcher = (url: string) => fetch(url).then((r) => r.json());
+import { fetcher } from "@/lib/helpers";
 
 const initialCounts: Record<JobStatus, number> = {
   applied: 0,
