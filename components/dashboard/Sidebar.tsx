@@ -1,6 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 import useSWR from "swr";
 import { Separator } from "@/components/ui/separator";
 import AddJobForm from "@/components/dashboard/AddJobForm";
@@ -17,8 +19,11 @@ const initialCounts: Record<JobStatus, number> = {
 };
 
 const Sidebar = () => {
+  const pathname = usePathname();
   const { data, error } = useSWR<Job[]>("/api/jobs", fetcher);
   const jobs: Job[] = Array.isArray(data) ? data : [];
+
+  const isJobDetailPage = pathname.startsWith("/dashboard/jobs/");
 
   // Compute counts with useMemo (still always called)
   const counts = useMemo(() => {
@@ -36,9 +41,16 @@ const Sidebar = () => {
 
   return (
     <aside className="w-64 bg-card border-r flex-shrink-0 flex flex-col p-6">
-      <h1 className="logo text-2xl font-bold text-primary mb-8">Careerly</h1>
-
-      <AddJobForm />
+      {isJobDetailPage ? (
+        <Link
+          href="/dashboard"
+          className="btn btn-primary mb-6 cursor-default"
+        >
+          ← Back to Dashboard
+        </Link>
+      ) : (
+        <AddJobForm />
+      )}
 
       <nav className="space-y-2 text-sm">
         {["Applied", "Interviewing", "Offer", "Rejected"].map((status) => {
@@ -48,7 +60,7 @@ const Sidebar = () => {
           return (
             <div
               key={status}
-              className="flex justify-between items-center px-2 py-1 rounded hover:bg-muted cursor-pointer"
+              className="flex-between px-2 py-1 rounded hover:bg-muted cursor-pointer"
             >
               <span>{status}</span>
 

@@ -52,8 +52,6 @@ const AddJobForm = () => {
 
     setLoading(true);
 
-    console.log("form: ", JSON.stringify(body));
-
     const res = await fetch("/api/jobs", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -82,7 +80,9 @@ const AddJobForm = () => {
   return (
     <Dialog open={isOpen} onOpenChange={(open) => (open ? handleOpen() : handleClose())}>
       <DialogTrigger asChild>
-        <Button className="w-full mb-6 bg-primary text-primary-foreground hover:opacity-90">
+        <Button 
+          className="mb-6"
+        >
           + Add Job
         </Button>
       </DialogTrigger>

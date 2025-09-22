@@ -10,13 +10,17 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { ApplicationNote, NotesSectionProps } from "@/types/job";
 import { fetcher } from "@/lib/helpers";
-import { ScrollArea } from "../ui/scroll-area";
 
 const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
-  const { data: notes, mutate, isLoading } = useSWR<ApplicationNote[]>(
+  const {
+    data: notes,
+    mutate,
+    isLoading,
+  } = useSWR<ApplicationNote[]>(
     selectedJobId ? `/api/jobs/${selectedJobId}/notes` : null,
     fetcher
   );
@@ -70,17 +74,17 @@ const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
       <CardContent className="flex-1 flex flex-col overflow-hidden">
         {!selectedJobId ? (
           <div className="flex-1 flex-center text-muted-foreground">
-            Select a job to view notes  
+            Select a job to view notes
+          </div>
+        ) : isLoading ? (
+          <div className="flex-1 flex-center">
+            <p className="text-primary animate-pulse">Loading notes...</p>
           </div>
         ) : (
           <>
             <div className="flex-1 pr-2">
-              {isLoading ? (
-                <div className="pt-5 flex-1 flex-center text-muted-foreground">
-                  Loading notes...
-                </div>
-              ) : (!notes || notes.length === 0) && (
-                <>
+              {(!notes || notes.length === 0) && (
+                <div className="pt-5">
                   <p className="text-sm text-muted-foreground">
                     No notes yet. Add your first one below.
                   </p>
@@ -95,10 +99,12 @@ const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
                       Add
                     </Button>
                   </div>
-                </>
+                </div>
               )}
 
-              <ScrollArea className="h-[14vh] w-full">
+              <ScrollArea
+                className={`w-full ${showNoteInput ? "h-[12vh]" : "h-[22vh]"}`}
+              >
                 <Table>
                   <TableBody>
                     {notes?.map((note) => (
@@ -131,7 +137,7 @@ const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
             </div>
 
             {showNoteInput && (
-              <div className="flex items-center gap-2 mt-4">
+              <div className="flex items-center gap-2 pb-1">
                 <Input
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}

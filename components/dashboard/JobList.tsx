@@ -27,7 +27,9 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
   const router = useRouter();
 
   if (error) return <div className="text-destructive">Failed to load jobs</div>;
-  if (!data) return <div>Loading jobs...</div>;
+  if (!data) return (
+    <p className="text-emerald-600 animate-pulse">Loading jobs...</p>
+  );
 
   return (
     <ScrollArea className="h-[47vh] w-full rounded-md border">

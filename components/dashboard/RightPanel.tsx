@@ -40,7 +40,7 @@ const RightPanel = () => {
           <CardTitle>AI-Powered Resume & Cover Letter</CardTitle>
         </CardHeader>
         <CardContent>
-          <Button className="w-full bg-primary text-primary-foreground hover:opacity-90">
+          <Button className="w-full">
             Generate Suggestions
           </Button>
         </CardContent>
@@ -53,7 +53,7 @@ const RightPanel = () => {
 
         <CardContent className="flex-1">
           {!statusSummary ? (
-            <p className="text-sm text-muted-foreground">Loading...</p>
+            <p className="text-primary animate-pulse">Loading...</p>
           ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart
