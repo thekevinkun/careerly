@@ -19,6 +19,9 @@ export async function GET(_req: Request) {
       resumes: true,
       coverLetters: true,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
 
   return NextResponse.json(jobs);
