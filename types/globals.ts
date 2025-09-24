@@ -7,10 +7,6 @@ export interface ApplicationNote {
   jobId: string;
 }
 
-export interface NotesSectionProps {
-  selectedJobId?: string | null;
-}
-
 export interface ResumeVersion {
   id: string;
   content: string;
@@ -40,4 +36,12 @@ export interface Job {
   notes: ApplicationNote[];
   resumes: ResumeVersion[];
   coverLetters: CoverLetter[];
+}
+
+export interface AiResultDialogProps {
+  selectedJobId: string | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  aiResult: { resume: string; coverLetter: string; isAiGenerated: boolean } | null;
+  onSave: () => void;
 }

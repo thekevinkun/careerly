@@ -12,10 +12,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { ApplicationNote, NotesSectionProps } from "@/types/job";
+import { ApplicationNote } from "@/types/globals";
 import { fetcher } from "@/lib/helpers";
 
-const NotesSection = ({ selectedJobId }: NotesSectionProps) => {
+const NotesSection = ({ selectedJobId }: { selectedJobId?: string | null}) => {
   const {
     data: notes,
     mutate,

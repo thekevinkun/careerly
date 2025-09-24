@@ -5,10 +5,10 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import useSWR from "swr";
 import { Separator } from "@/components/ui/separator";
-import AddJobForm from "@/components/dashboard/AddJobForm";
+import AddJobForm from "@/components/modals/AddJobForm";
 import LogoutButton from "@/components/LogoutButton";
 
-import { Job, JobStatus } from "@/types/job";
+import { Job, JobStatus } from "@/types/globals";
 import { fetcher } from "@/lib/helpers";
 
 const initialCounts: Record<JobStatus, number> = {

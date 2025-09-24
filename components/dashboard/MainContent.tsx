@@ -32,7 +32,7 @@ const MainContent = () => {
 
           {/* Right Panel */}
           <section className="col-span-1 flex flex-col">
-            <RightPanel />
+            <RightPanel selectedJobId={selectedJobId} />
           </section>
         </div>
 

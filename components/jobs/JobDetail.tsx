@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Pencil, Trash2, Check, X, Sparkles } from "lucide-react";
 
-import { Job } from "@/types/job";
+import { Job } from "@/types/globals";
 import { fetcher, statusClass } from "@/lib/helpers";
 
 const JobDetail = ({ jobId }: { jobId: string }) => {
@@ -326,7 +326,7 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
               {job.resumes && job.resumes.length > 0 ? (
                 <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mt-2">
                   {job.resumes.map((r) => (
-                    <li key={r.id}>🤖 {r.content.slice(0, 50)}...</li>
+                    <li key={r.id}>{r.content.slice(0, 50)}...</li>
                   ))}
                 </ul>
               ) : (
@@ -353,7 +353,7 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
               {job.coverLetters && job.coverLetters.length > 0 ? (
                 <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mt-2">
                   {job.coverLetters.map((c) => (
-                    <li key={c.id}>🤖 {c.content.slice(0, 50)}...</li>
+                    <li key={c.id}>{c.content.slice(0, 50)}...</li>
                   ))}
                 </ul>
               ) : (

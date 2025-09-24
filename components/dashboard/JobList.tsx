@@ -18,7 +18,7 @@ import {
   TableHead,
 } from "@/components/ui/table";
 
-import { Job } from "@/types/job";
+import { Job } from "@/types/globals";
 import { fetcher, statusClass } from "@/lib/helpers";
 
 const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
