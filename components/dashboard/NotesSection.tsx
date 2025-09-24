@@ -103,7 +103,7 @@ const NotesSection = ({ selectedJobId }: { selectedJobId?: string | null}) => {
               )}
 
               <ScrollArea
-                className={`w-full ${showNoteInput ? "h-[12vh]" : "h-[22vh]"}`}
+                className={`w-full ${showNoteInput ? "h-[12vh]" : "h-[20vh]"}`}
               >
                 <Table>
                   <TableBody>
