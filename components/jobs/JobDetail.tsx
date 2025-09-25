@@ -9,6 +9,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+
+import AiResultDialog from "@/components/modals/AiResultDialog";
+import ResumeCard from "./ResumeCard";
+import CoverLetterCard from "./CoverLetterCard";
+
 import { Pencil, Trash2, Check, X, Sparkles } from "lucide-react";
 
 import { Job } from "@/types/globals";
@@ -26,6 +31,16 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
   const [editValues, setEditValues] = useState<any>({});
   const [newNote, setNewNote] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [loadingAiGenerateResume, setLoadingAiGenerateResume] = useState(false);
+  const [loadingAiGenerateCoverLetter, setLoadingAiGenerateCoverLetter] =
+    useState(false);
+  const [aiResult, setAiResult] = useState<{
+    resume?: string | null;
+    coverLetter?: string | null;
+    isAiGenerated: boolean;
+  } | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   // Loading state
   if (isLoading) {
@@ -84,6 +99,59 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
     });
     setEditingField(null);
     mutate();
+  };
+
+  const handleGenerateResumeWithAI = async () => {
+    if (!jobId) return;
+    setLoadingAiGenerateResume(true);
+
+    try {
+      // call resume API
+      const resumeRes = await fetch(`/api/jobs/${jobId}/resume-generate`, {
+        method: "POST",
+      });
+
+      if (!resumeRes.ok) throw new Error("Failed to generate resume");
+      const resumeData = await resumeRes.json();
+
+      setAiResult({
+        resume: resumeData.resume,
+        coverLetter: null,
+        isAiGenerated: resumeData.isAiGenerated,
+      });
+      setShowModal(true);
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong generating resume.");
+    } finally {
+      setLoadingAiGenerateResume(false);
+    }
+  };
+
+  const handleGenerateCoverLetterWithAI = async () => {
+    if (!jobId) return;
+    setLoadingAiGenerateCoverLetter(true);
+
+    try {
+      // call cover letter API
+      const coverRes = await fetch(`/api/jobs/${jobId}/cover-letter-generate`, {
+        method: "POST",
+      });
+      if (!coverRes.ok) throw new Error("Failed to generate cover letter");
+      const coverData = await coverRes.json();
+
+      setAiResult({
+        resume: null,
+        coverLetter: coverData.coverLetter,
+        isAiGenerated: coverData.isAiGenerated,
+      });
+      setShowModal(true);
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong generating cover letter.");
+    } finally {
+      setLoadingAiGenerateCoverLetter(false);
+    }
   };
 
   return (
@@ -264,8 +332,8 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
                             </span>
                           </div>
                         </div>
-                        
-                        {editingField === "notes" &&
+
+                        {editingField === "notes" && (
                           <div>
                             <Button
                               variant="destructive"
@@ -282,7 +350,7 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
                               <Trash2 />
                             </Button>
                           </div>
-                        }
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -315,20 +383,34 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
             <div>
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-primary">Resumes</h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => alert("Generate Resume with AI (todo)")}
-                >
-                  <Sparkles className="w-4 h-4 mr-1" /> Generate with AI
-                </Button>
+
+                {!job.resumes ||
+                  (job.resumes.length === 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={loadingAiGenerateResume}
+                      onClick={handleGenerateResumeWithAI}
+                    >
+                      {loadingAiGenerateResume ? (
+                        "Generating..."
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4" /> Generate with AI
+                        </>
+                      )}
+                    </Button>
+                  ))}
               </div>
               {job.resumes && job.resumes.length > 0 ? (
-                <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mt-2">
-                  {job.resumes.map((r) => (
-                    <li key={r.id}>{r.content.slice(0, 50)}...</li>
-                  ))}
-                </ul>
+                job.resumes.map((r) => (
+                  <ResumeCard
+                    key={r.id}
+                    resume={r}
+                    index={job.resumes.indexOf(r)}
+                    mutate={mutate}
+                  />
+                ))
               ) : (
                 <p className="text-sm text-muted-foreground italic mt-2">
                   No AI-generated resumes yet.
@@ -342,20 +424,34 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
             <div>
               <div className="flex items-center justify-between">
                 <h3 className="font-semibold text-primary">Cover Letters</h3>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => alert("Generate Cover Letter with AI (todo)")}
-                >
-                  <Sparkles className="w-4 h-4 mr-1" /> Generate with AI
-                </Button>
+
+                {!job.coverLetters ||
+                  (job.coverLetters.length === 0 && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={loadingAiGenerateCoverLetter}
+                      onClick={handleGenerateCoverLetterWithAI}
+                    >
+                      {loadingAiGenerateCoverLetter ? (
+                        "Generating..."
+                      ) : (
+                        <>
+                          <Sparkles className="w-4 h-4" /> Generate with AI
+                        </>
+                      )}
+                    </Button>
+                  ))}
               </div>
               {job.coverLetters && job.coverLetters.length > 0 ? (
-                <ul className="list-disc list-inside text-sm text-muted-foreground space-y-1 mt-2">
-                  {job.coverLetters.map((c) => (
-                    <li key={c.id}>{c.content.slice(0, 50)}...</li>
-                  ))}
-                </ul>
+                job.coverLetters.map((c) => (
+                  <CoverLetterCard
+                    key={c.id}
+                    coverLetter={c}
+                    index={job.coverLetters.indexOf(c)}
+                    mutate={mutate}
+                  />
+                ))
               ) : (
                 <p className="text-sm text-muted-foreground italic mt-2">
                   No AI-generated cover letters yet.
@@ -379,6 +475,14 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
             </div>
           </CardContent>
         </Card>
+
+        <AiResultDialog
+          selectedJobId={jobId || null}
+          open={showModal}
+          onOpenChange={setShowModal}
+          aiResult={aiResult}
+          mutate={mutate}
+        />
       </div>
     </ScrollArea>
   );

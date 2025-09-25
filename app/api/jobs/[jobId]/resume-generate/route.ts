@@ -56,15 +56,15 @@ Instructions:
     console.error("AI error → using fallback:", error);
 
     return NextResponse.json({
-      resume: `• Highlight your skills relevant to "${job.title}" at ${
+      resume: `- Highlight your skills relevant to "${job.title}" at ${
         job.company
       }.
-• Showcase achievements related to "${
+- Showcase achievements related to "${
         job.description?.slice(0, 80) || "the role"
       }".
-• Emphasize teamwork, adaptability, and problem-solving.
-• Mention any tools or technologies that fit the position.
-• Close with enthusiasm for contributing to ${job.company}.`,
+- Emphasize teamwork, adaptability, and problem-solving.
+- Mention any tools or technologies that fit the position.
+- Close with enthusiasm for contributing to ${job.company}.`,
       isAiGenerated: false,
     });
   }

@@ -157,11 +157,6 @@ const RightPanel = ({ selectedJobId }: { selectedJobId?: string | null }) => {
         open={showModal}
         onOpenChange={setShowModal}
         aiResult={aiResult}
-        onSave={() => {
-          // TODO: Save to DB
-          alert("Saved (TODO)");
-          setShowModal(false);
-        }}
       />
     </aside>
   );

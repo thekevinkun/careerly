@@ -17,7 +17,7 @@ const AiResultDialog = ({
   open,
   onOpenChange,
   aiResult,
-  onSave,
+  mutate,
 }: AiResultDialogProps) => {
   const [copiedSection, setCopiedSection] = useState<null | "resume" | "cover">(
     null
@@ -49,6 +49,7 @@ const AiResultDialog = ({
         }),
       });
       setResumeState("saved");
+      mutate?.();
     } catch (err) {
       console.error("Error saving resume:", err);
       setResumeState("idle");
@@ -69,6 +70,7 @@ const AiResultDialog = ({
         }),
       });
       setCoverState("saved");
+      mutate?.();
     } catch (err) {
       console.error("Error saving cover letter:", err);
       setCoverState("idle");
@@ -95,60 +97,68 @@ const AiResultDialog = ({
             {aiResult ? (
               <div className="mt-5 space-y-8">
                 {/* Resume Section */}
-                <div className="space-y-2">
-                  <h4 className="font-semibold">Resume</h4>
-                  <p className="text-sm whitespace-pre-line border rounded-md p-3 bg-muted">
-                    {aiResult.resume}
-                  </p>
-                  <div className="flex gap-2 justify-end">
-                    <Button
-                      variant="outline"
-                      className="min-w-[130px]"
-                      onClick={() => handleCopy(aiResult.resume, "resume")}
-                    >
-                      {copiedSection === "resume" ? "✓ Copied!" : "Copy Resume"}
-                    </Button>
-                    <Button
-                      onClick={handleSaveResume}
-                      disabled={
-                        resumeState === "saved" || resumeState === "loading"
-                      }
-                    >
-                      {resumeState === "idle" && "Save"}
-                      {resumeState === "loading" && "Saving..."}
-                      {resumeState === "saved" && "Saved"}
-                    </Button>
+                {aiResult.resume && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold">Resume</h4>
+                    <p className="text-sm whitespace-pre-line border rounded-md p-3 bg-muted">
+                      {aiResult.resume}
+                    </p>
+                    <div className="flex gap-2 justify-end">
+                      <Button
+                        variant="outline"
+                        className="min-w-[130px]"
+                        onClick={() => handleCopy(aiResult.resume ?? "", "resume")}
+                      >
+                        {copiedSection === "resume"
+                          ? "✓ Copied!"
+                          : "Copy Resume"}
+                      </Button>
+                      <Button
+                        onClick={handleSaveResume}
+                        disabled={
+                          resumeState === "saved" || resumeState === "loading"
+                        }
+                      >
+                        {resumeState === "idle" && "Save"}
+                        {resumeState === "loading" && "Saving..."}
+                        {resumeState === "saved" && "Saved"}
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Cover Letter Section */}
-                <div className="space-y-2">
-                  <h4 className="font-semibold">Cover Letter</h4>
-                  <p className="text-sm whitespace-pre-line border rounded-md p-3 bg-muted">
-                    {aiResult.coverLetter}
-                  </p>
-                  <div className="flex gap-2 justify-end">
-                    <Button
-                      variant="outline"
-                      className="min-w-[160px]"
-                      onClick={() => handleCopy(aiResult.coverLetter, "cover")}
-                    >
-                      {copiedSection === "cover"
-                        ? "✓ Copied!"
-                        : "Copy Cover Letter"}
-                    </Button>
-                    <Button
-                      onClick={handleSaveCoverLetter}
-                      disabled={
-                        coverState === "saved" || coverState === "loading"
-                      }
-                    >
-                      {coverState === "idle" && "Save"}
-                      {coverState === "loading" && "Saving..."}
-                      {coverState === "saved" && "Saved"}
-                    </Button>
+                {aiResult.coverLetter && (
+                  <div className="space-y-2">
+                    <h4 className="font-semibold">Cover Letter</h4>
+                    <p className="text-sm whitespace-pre-line border rounded-md p-3 bg-muted">
+                      {aiResult.coverLetter}
+                    </p>
+                    <div className="flex gap-2 justify-end">
+                      <Button
+                        variant="outline"
+                        className="min-w-[160px]"
+                        onClick={() =>
+                          handleCopy(aiResult.coverLetter ?? "", "cover")
+                        }
+                      >
+                        {copiedSection === "cover"
+                          ? "✓ Copied!"
+                          : "Copy Cover Letter"}
+                      </Button>
+                      <Button
+                        onClick={handleSaveCoverLetter}
+                        disabled={
+                          coverState === "saved" || coverState === "loading"
+                        }
+                      >
+                        {coverState === "idle" && "Save"}
+                        {coverState === "loading" && "Saving..."}
+                        {coverState === "saved" && "Saved"}
+                      </Button>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             ) : (
               <p className="text-muted-foreground mt-4">

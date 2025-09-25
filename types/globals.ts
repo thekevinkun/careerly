@@ -42,6 +42,18 @@ export interface AiResultDialogProps {
   selectedJobId: string | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  aiResult: { resume: string; coverLetter: string; isAiGenerated: boolean } | null;
-  onSave: () => void;
+  aiResult: { resume?: string | null; coverLetter?: string | null; isAiGenerated: boolean } | null;
+  mutate?: () => void;
+}
+
+export interface ResumeCardProps {
+  resume: ResumeVersion;
+  index: number;
+  mutate: () => void;
+}
+
+export interface CoverLetterCardProps {
+  coverLetter: CoverLetter;
+  index: number;
+  mutate: () => void;
 }
