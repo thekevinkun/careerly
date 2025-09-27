@@ -7,7 +7,7 @@ import moment from "moment";
 
 import { Eye, Pencil, Check, Trash2, X } from "lucide-react";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -35,7 +35,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
 
   if (error) return <div className="text-destructive">Failed to load jobs</div>;
   if (!data)
-    return <p className="text-emerald-600 animate-pulse">Loading jobs...</p>;
+    return <p className="h-full w-full flex-center text-primary animate-pulse">Loading jobs...</p>;
 
   const handleSave = async (jobId: string) => {
     await fetch(`/api/jobs/${jobId}`, {
@@ -46,33 +46,41 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
     setEditingId(null);
     await mutate("/api/jobs"); // refersh list of jobs
     await mutate("/api/jobs/status-summary"); // refersh chart
-  }
+  };
 
   const handleCancel = () => {
     setEditingId(null);
     setEditValues({ title: "", company: "", status: "applied" });
-  }
+  };
 
   return (
-    <ScrollArea className="h-[47vh] w-full rounded-md border">
-      <Table>
-        <TableHeader className="sticky top-0 bg-background z-10 shadow-sm border-b">
-          <TableRow>
-            <TableHead>Title</TableHead>
-            <TableHead>Company</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Applied</TableHead>
-            <TableHead className="text-center"></TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
+    <div className="h-[57vh] w-full overflow-hidden">
+      <div className="hidden md:block sticky top-0 bg-white/90 backdrop-blur-sm z-10 md:shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-5 
+          lg:grid-cols-[minmax(80px,150px)_minmax(80px,150px)_minmax(80px,125px)_minmax(70px,90px)_minmax(80px,120px)] 
+          gap-x-2 md:gap-x-3 lg:gap-x-2 items-center font-medium py-2 px-0 md:px-4 text-sm"
+        >
+          <div className="hidden md:block text-foreground">Title</div>
+          <div className="hidden md:block text-foreground">Company</div>
+          <div className="hidden md:block text-foreground">Status</div>
+          <div className="hidden md:block text-foreground">Applied</div>
+          <div className="hidden md:block text-foreground text-right"></div>
+        </div>
+      </div>
+
+      <ScrollArea className="h-full lg:h-[calc(57vh-64px)] w-full">
+        <div className="min-w-full sm:min-w-[600px] p-0 pr-3 md:pr-0">
           {data.map((job: Job) => {
             const isEditing = editingId === job.id;
             return (
-              <TableRow
+              <div
                 key={job.id}
-                className={`cursor-pointer hover:bg-muted/50 ${
-                  selectedJobId === job.id && "bg-muted pointer-events-none"
+                className={`grid grid-cols-1 md:grid-cols-5 
+                  lg:grid-cols-[minmax(80px,150px)_minmax(80px,150px)_minmax(80px,125px)_minmax(70px,90px)_minmax(80px,120px)] 
+                  gap-x-2 md:gap-x-3 lg:gap-x-2 items-start md:items-center py-2 px-0 md:px-4
+                  cursor-pointer hover:md:bg-muted/50 md:border-b last:border-b-0 text-sm
+                  
+                  ${selectedJobId === job.id && "bg-muted pointer-events-none"
                 }`}
                 onClick={() => {
                   if (!isEditing) {
@@ -80,8 +88,148 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                   }
                 }}
               >
-                {/* Title */}
-                <TableCell className="max-w-[150px] truncate">
+                <div className="bg-white-card md:bg-muted/20 md:hidden mb-0 md:mb-2 p-4 md:p-2 md:rounded">
+                  <div className="font-medium mb-1">
+                    {isEditing ? (
+                      <input
+                        className="w-full border rounded px-2 py-1 text-sm mb-1"
+                        placeholder="Title"
+                        value={editValues.title}
+                        onChange={(e) =>
+                          setEditValues((prev) => ({
+                            ...prev,
+                            title: e.target.value,
+                          }))
+                        }
+                      />
+                    ) : (
+                      <div className="truncate">{job.title}</div>
+                    )}
+                    {isEditing ? (
+                      <input
+                        className="w-full border rounded px-2 py-1 text-sm"
+                        placeholder="Company"
+                        value={editValues.company}
+                        onChange={(e) =>
+                          setEditValues((prev) => ({
+                            ...prev,
+                            company: e.target.value,
+                          }))
+                        }
+                      />
+                    ) : (
+                      <div className="text-muted-foreground text-xs truncate">
+                        {job.company}
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-2 mb-2">
+                    <div className="flex-1 min-w-[120px]">
+                      {isEditing ? (
+                        <select
+                          className="w-full border rounded px-2 py-1 text-sm"
+                          value={editValues.status}
+                          onChange={(e) =>
+                            setEditValues((prev) => ({
+                              ...prev,
+                              status: e.target.value,
+                            }))
+                          }
+                        >
+                          <option value="applied">Applied</option>
+                          <option value="interviewing">Interviewing</option>
+                          <option value="offer">Offer</option>
+                          <option value="rejected">Rejected</option>
+                        </select>
+                      ) : (
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${statusClass(
+                            job.status
+                          )}`}
+                        >
+                          {job.status[0].toUpperCase() + job.status.slice(1)}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-[100px] text-right">
+                      {job.appliedAt
+                        ? moment(job.appliedAt).local().format("MMM D, YYYY")
+                        : "-"}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-1 pointer-events-auto">
+                    {isEditing ? (
+                      <>
+                        <Button
+                          variant="default"
+                          size="sm"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            await handleSave(job.id);
+                          }}
+                        >
+                          <Check />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCancel();
+                          }}
+                        >
+                          <X />
+                        </Button>
+                        <Button
+                          variant="destructive"
+                          size="sm"
+                          onClick={async (e) => {
+                            e.stopPropagation();
+                            if (!confirm("Delete job?")) return;
+                            await fetch(`/api/jobs/${job.id}`, {
+                              method: "DELETE",
+                            });
+                            await mutate("/api/jobs");
+                            await mutate("/api/jobs/status-summary");
+                          }}
+                        >
+                          <Trash2 />
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            router.push(`/dashboard/jobs/${job.id}`);
+                          }}
+                        >
+                          <Eye />
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setEditingId(job.id);
+                            setEditValues({
+                              title: job.title,
+                              company: job.company,
+                              status: job.status,
+                            });
+                          }}
+                        >
+                          <Pencil />
+                        </Button>
+                      </>
+                    )}
+                  </div>
+                </div>
+
+                <div className="hidden md:block truncate">
                   {isEditing ? (
                     <input
                       className="w-full border rounded px-2 py-1 text-sm"
@@ -96,10 +244,9 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                   ) : (
                     job.title
                   )}
-                </TableCell>
+                </div>
 
-                {/* Company */}
-                <TableCell className="max-w-[150px] truncate">
+                <div className="hidden md:block truncate">
                   {isEditing ? (
                     <input
                       className="w-full border rounded px-2 py-1 text-sm"
@@ -114,10 +261,9 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                   ) : (
                     job.company
                   )}
-                </TableCell>
+                </div>
 
-                {/* Status */}
-                <TableCell>
+                <div className="hidden md:block">
                   {isEditing ? (
                     <select
                       className="w-full border rounded px-2 py-1 text-sm"
@@ -143,17 +289,15 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                       {job.status[0].toUpperCase() + job.status.slice(1)}
                     </span>
                   )}
-                </TableCell>
+                </div>
 
-                {/* Applied Date */}
-                <TableCell>
+                <div className="hidden md:block">
                   {job.appliedAt
                     ? moment(job.appliedAt).local().format("MMM D, YYYY")
                     : "-"}
-                </TableCell>
+                </div>
 
-                {/* Actions */}
-                <TableCell className="text-center space-x-2 pointer-events-auto">
+                <div className="hidden md:block text-right space-x-1 pointer-events-auto">
                   {isEditing ? (
                     <>
                       <Button
@@ -166,7 +310,6 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                       >
                         <Check />
                       </Button>
-
                       <Button
                         variant="outline"
                         size="sm"
@@ -177,7 +320,6 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                       >
                         <X />
                       </Button>
-
                       <Button
                         variant="destructive"
                         size="sm"
@@ -187,8 +329,8 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                           await fetch(`/api/jobs/${job.id}`, {
                             method: "DELETE",
                           });
-                          await mutate("/api/jobs"); // refersh list of jobs
-                          await mutate("/api/jobs/status-summary"); // refersh chart
+                          await mutate("/api/jobs");
+                          await mutate("/api/jobs/status-summary");
                         }}
                       >
                         <Trash2 />
@@ -223,13 +365,15 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                       </Button>
                     </>
                   )}
-                </TableCell>
-              </TableRow>
+                </div>
+              </div>
             );
           })}
-        </TableBody>
-      </Table>
-    </ScrollArea>
+        </div>
+        <ScrollBar orientation="vertical" />
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+    </div>
   );
 };
 

@@ -40,17 +40,19 @@ const Sidebar = () => {
   const isLoading = !data && !error;
 
   return (
-    <aside className="w-64 bg-card border-r flex-shrink-0 flex flex-col p-6">
-      {isJobDetailPage ? (
-        <Link
-          href="/dashboard"
-          className="btn btn-primary mb-6 cursor-default"
-        >
-          ← Back to Dashboard
-        </Link>
-      ) : (
-        <AddJobForm />
-      )}
+    <aside className="w-80 lg:w-64 bg-white/80 backdrop-blur-md flex-shrink-0 flex flex-col p-6 shadow-sm">
+      <div className="w-full hidden lg:block">
+        {isJobDetailPage ? (
+          <Link
+            href="/dashboard"
+            className="btn btn-primary mb-6 cursor-default"
+          >
+            ← Back to Dashboard
+          </Link>
+        ) : (
+          <AddJobForm />
+        )}
+      </div>
 
       <nav className="space-y-2 text-sm">
         {["Applied", "Interviewing", "Offer", "Rejected"].map((status) => {

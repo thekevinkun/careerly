@@ -126,6 +126,12 @@ html, body {
   .btn-primary {
     @apply bg-primary text-primary-foreground hover:bg-primary/90;
   }
+  .bg-ai-card {
+    @apply bg-[linear-gradient(135deg,hsl(160,84%,39%)_0%,hsl(160,84%,32%)_100%)] shadow-lg border border-emerald-700/30;
+  }
+  .bg-white-card {
+    @apply bg-gradient-to-b from-white to-gray-100 shadow-sm rounded-xl border border-gray-200;
+  }
   .text-balance {
     text-wrap: balance;
   }

@@ -53,7 +53,7 @@ const NotesSection = ({ selectedJobId }: { selectedJobId?: string | null}) => {
   }, [selectedJobId, notes]);
 
   return (
-    <Card className="relative h-full flex flex-col !gap-5">
+    <Card className="relative h-full flex flex-col !gap-5 px-0 md:!px-2">
       <CardHeader>
         <CardTitle>Notes</CardTitle>
       </CardHeader>

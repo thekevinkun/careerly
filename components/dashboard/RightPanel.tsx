@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import useSWR from "swr";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -84,24 +85,31 @@ const RightPanel = ({ selectedJobId }: { selectedJobId?: string | null }) => {
   };
 
   return (
-    <aside className="h-full w-full flex flex-col gap-6">
+    <aside className="h-full w-full flex flex-col sm:flex-row lg:flex-col gap-6">
       {/* AI Powered */}
-      <Card>
+      <Card className="!pt-3 !pb-5 !px-0 bg-ai-card">
         <CardHeader>
-          <CardTitle>AI-Powered Resume & Cover Letter</CardTitle>
+          <Image 
+            src="/icons/glitter-sparkle.svg"
+            alt="AI Glitter Sparkle Icons"
+            width={38}
+            height={38}
+          />
+          <CardTitle className="pt-0.5 text-primary-foreground">AI-Powered Resume & Cover Letter</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-3">
           {!selectedJobId ? (
-            <p className="text-sm text-muted-foreground italic">
+            <p className="text-sm text-primary-foreground italic">
               Select a job from the list to generate
             </p>
           ) : (
-            <p className="text-sm text-muted-foreground italic">
+            <p className="text-sm text-primary-foreground italic">
               Ready to generate
             </p>
           )}
 
           <Button
+            variant="secondary"
             className="w-full"
             onClick={handleGenerate}
             disabled={!selectedJobId || loading}
@@ -112,11 +120,11 @@ const RightPanel = ({ selectedJobId }: { selectedJobId?: string | null }) => {
       </Card>
 
       {/* Chart */}
-      <Card className="flex-1 flex flex-col">
+      <Card className="hidden sm:flex flex-col !px-0 lg:!px-5 flex-1">
         <CardHeader>
           <CardTitle>Applications by Status</CardTitle>
         </CardHeader>
-        <CardContent className="flex-1">
+        <CardContent className="flex-1 min-h-[132px]">
           {!statusSummary ? (
             <p className="text-primary animate-pulse">Loading...</p>
           ) : (
@@ -124,8 +132,8 @@ const RightPanel = ({ selectedJobId }: { selectedJobId?: string | null }) => {
               <BarChart
                 data={chartData}
                 layout="vertical"
-                margin={{ top: 0, right: 20, left: 0, bottom: 0 }}
-                barCategoryGap={4}
+                margin={{ top: 0, right: 10, left: 0, bottom: 0 }}
+                barCategoryGap={5}
               >
                 <XAxis type="number" hide />
                 <YAxis

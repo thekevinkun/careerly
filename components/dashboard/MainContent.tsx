@@ -15,29 +15,29 @@ const MainContent = () => {
 
   return (
     <ScrollArea className="h-full w-full">
-      <main className="min-h-full w-full p-6 space-y-6">
+      <main className="min-h-full w-full py-6 pl-4 pr-5 space-y-6">
         {/* Top row: job applications + right panel */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Job applications */}
-          <section className="col-span-2 flex flex-col">
-            <Card className="h-full w-full flex flex-col">
+          <section className="order-2 lg:order-1 col-span-2 flex flex-col">
+            <Card className="h-full w-full flex flex-col px-0 md:!px-2 lg:!pb-0.5">
               <CardHeader>
                 <CardTitle>Job Applications</CardTitle>
               </CardHeader>
-              <CardContent className="flex-1">
+              <CardContent className="flex-1 lg:!pb-0">
                 <JobList selectedJobId={selectedJobId} />
               </CardContent>
             </Card>
           </section>
 
           {/* Right Panel */}
-          <section className="col-span-1 flex flex-col">
+          <section className="order-1 lg:order-2 col-span-2 lg:col-span-1 flex flex-col">
             <RightPanel selectedJobId={selectedJobId} />
           </section>
         </div>
 
         {/* Bottom row: Notes */}
-        <section className="w-full h-56 overflow-hidden">
+        <section className="hidden sm:block w-full h-48 xl:h-56 overflow-hidden">
           <NotesSection selectedJobId={selectedJobId} />
         </section>
       </main>

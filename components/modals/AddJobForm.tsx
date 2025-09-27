@@ -81,7 +81,7 @@ const AddJobForm = () => {
     <Dialog open={isOpen} onOpenChange={(open) => (open ? handleOpen() : handleClose())}>
       <DialogTrigger asChild>
         <Button 
-          className="mb-6"
+          className="lg:w-full lg:mb-6"
         >
           + Add Job
         </Button>
