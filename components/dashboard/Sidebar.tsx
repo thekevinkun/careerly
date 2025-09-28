@@ -11,6 +11,8 @@ import LogoutButton from "@/components/LogoutButton";
 import { Job, JobStatus } from "@/types/globals";
 import { fetcher } from "@/lib/helpers";
 
+import BarChartCard from "./BarChartCard";
+
 const initialCounts: Record<JobStatus, number> = {
   applied: 0,
   interviewing: 0,
@@ -54,7 +56,11 @@ const Sidebar = () => {
         )}
       </div>
 
-      <nav className="space-y-2 text-sm">
+      <div className="mt-5 flex flex-1 sm:hidden">
+        <BarChartCard />
+      </div>
+
+      <nav className="mt-5 lg:mt-0 space-y-2 text-sm">
         {["Applied", "Interviewing", "Offer", "Rejected"].map((status) => {
           const key = status.toLowerCase();
           const value = counts[key as keyof typeof counts] ?? 0;

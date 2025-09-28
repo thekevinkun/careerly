@@ -14,7 +14,7 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   const isJobDetailPage = pathname.startsWith("/dashboard/jobs/");
 
   return (
-    <header className="h-14 bg-white/80 backdrop-blur-md shadow-sm px-4 sm:px-6 flex-between">
+    <header className="h-14 bg-white/80 backdrop-blur-md shadow-sm pl-2 pr-4 lg:!px-6 flex-between">
       <div className="flex items-center gap-3">
         {/* Hamburger only visible on mobile */}
         <button

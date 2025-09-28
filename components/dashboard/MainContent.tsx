@@ -1,5 +1,6 @@
 "use client";
 
+import useSWR from "swr";
 import { useSearchParams } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -8,9 +9,12 @@ import JobList from "./JobList";
 import RightPanel from "./RightPanel";
 import NotesSection from "./NotesSection";
 
+import { Job } from "@/types/globals";
+import { fetcher } from "@/lib/helpers";
+
 const MainContent = () => {
   const searchParams = useSearchParams();
-
+  const { data, error, isLoading } = useSWR<Job[]>("/api/jobs", fetcher);
   const selectedJobId = searchParams.get("job") || null;
 
   return (
@@ -25,19 +29,24 @@ const MainContent = () => {
                 <CardTitle>Job Applications</CardTitle>
               </CardHeader>
               <CardContent className="flex-1 lg:!pb-0">
-                <JobList selectedJobId={selectedJobId} />
+                <JobList
+                  data={data}
+                  error={error}
+                  isLoading={isLoading}
+                  selectedJobId={selectedJobId}
+                />
               </CardContent>
             </Card>
           </section>
 
           {/* Right Panel */}
           <section className="order-1 lg:order-2 col-span-2 lg:col-span-1 flex flex-col">
-            <RightPanel selectedJobId={selectedJobId} />
+            <RightPanel isLoading={isLoading} selectedJobId={selectedJobId} />
           </section>
         </div>
 
         {/* Bottom row: Notes */}
-        <section className="hidden sm:block w-full h-48 xl:h-56 overflow-hidden">
+        <section className="hidden md:block w-full h-60">
           <NotesSection selectedJobId={selectedJobId} />
         </section>
       </main>
