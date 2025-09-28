@@ -43,7 +43,7 @@ const Sidebar = () => {
 
   return (
     <aside className="w-80 lg:w-64 bg-white/80 backdrop-blur-md flex-shrink-0 flex flex-col p-6 shadow-sm">
-      <div className="w-full hidden lg:block">
+      <div className="w-full hidden lg:block text-end">
         {isJobDetailPage ? (
           <Link
             href="/dashboard"
@@ -95,7 +95,9 @@ const Sidebar = () => {
         </div>
       )}
 
-      <LogoutButton />
+      <div className="w-full mt-auto">
+        <LogoutButton />
+      </div>
     </aside>
   );
 };
