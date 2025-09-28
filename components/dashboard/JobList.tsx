@@ -62,7 +62,7 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
   };
 
   return (
-    <div className="h-[63vh] md:h-[58vh] w-full overflow-hidden">
+    <div className="h-[65vh] md:h-[57vh] lg:h-[60vh] w-full overflow-hidden">
       <div className="hidden md:block sticky top-0 bg-white/90 backdrop-blur-sm z-10 md:shadow-sm">
         <div
           className="grid grid-cols-1 md:grid-cols-5 
@@ -77,7 +77,7 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
         </div>
       </div>
 
-      <ScrollArea className="h-full lg:h-[calc(57vh-64px)] w-full">
+      <ScrollArea className="h-full md:h-[57vh-63px] lg:h-[calc(60vh-67px)] w-full">
         <div className="min-w-full sm:min-w-[600px] p-0 pr-3 md:pr-0">
           {data.map((job: Job) => {
             const isEditing = editingId === job.id;
