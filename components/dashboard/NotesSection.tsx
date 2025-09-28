@@ -71,7 +71,7 @@ const NotesSection = ({ selectedJobId }: { selectedJobId?: string | null}) => {
         </div>
       )}
 
-      <CardContent className="flex-1 flex flex-col overflow-hidden">
+      <CardContent className="!pt-0 flex-1 flex flex-col overflow-hidden">
         {!selectedJobId ? (
           <div className="flex-1 flex-center text-muted-foreground">
             Select a job to view notes
@@ -103,7 +103,7 @@ const NotesSection = ({ selectedJobId }: { selectedJobId?: string | null}) => {
               )}
 
               <ScrollArea
-                className={`w-full ${showNoteInput ? "h-[12vh]" : "h-[20vh]"}`}
+                className={`w-full ${showNoteInput ? "h-[14vh]" : "h-[22vh]"}`}
               >
                 <Table>
                   <TableBody>
@@ -137,7 +137,7 @@ const NotesSection = ({ selectedJobId }: { selectedJobId?: string | null}) => {
             </div>
 
             {showNoteInput && (
-              <div className="flex items-center gap-2 pb-1">
+              <div className="flex items-center gap-2 mt-2 pb-1">
                 <Input
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}
