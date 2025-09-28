@@ -2,27 +2,25 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import useSWR, { useSWRConfig } from "swr";
+import { useSWRConfig } from "swr";
 import moment from "moment";
 
 import { Eye, Pencil, Check, Trash2, X } from "lucide-react";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
-import {
-  Table,
-  TableBody,
-  TableRow,
-  TableCell,
-  TableHeader,
-  TableHead,
-} from "@/components/ui/table";
 
 import { Job } from "@/types/globals";
-import { fetcher, statusClass } from "@/lib/helpers";
+import { statusClass } from "@/lib/helpers";
 
-const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
-  const { data, error } = useSWR<Job[]>("/api/jobs", fetcher);
+interface JobListProps {
+  data?: Job[];
+  error?: any;
+  isLoading?: boolean;
+  selectedJobId?: string | null;
+}
+
+const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
   const { mutate } = useSWRConfig();
   const router = useRouter();
 
@@ -34,8 +32,18 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
   }>({ title: "", company: "", status: "applied" });
 
   if (error) return <div className="text-destructive">Failed to load jobs</div>;
-  if (!data)
-    return <p className="h-full w-full flex-center text-primary animate-pulse">Loading jobs...</p>;
+  if (isLoading)
+    return (
+      <p className="min-h-[60vh] md:min-h-full w-full flex-center text-primary animate-pulse">
+        Loading jobs...
+      </p>
+    );
+  if (!data || data.length === 0)
+    return (
+      <div className="text-muted-foreground">
+        No jobs yet. Add a job to get started!
+      </div>
+    );
 
   const handleSave = async (jobId: string) => {
     await fetch(`/api/jobs/${jobId}`, {
@@ -54,9 +62,10 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
   };
 
   return (
-    <div className="h-[57vh] w-full overflow-hidden">
+    <div className="h-[63vh] md:h-[58vh] w-full overflow-hidden">
       <div className="hidden md:block sticky top-0 bg-white/90 backdrop-blur-sm z-10 md:shadow-sm">
-        <div className="grid grid-cols-1 md:grid-cols-5 
+        <div
+          className="grid grid-cols-1 md:grid-cols-5 
           lg:grid-cols-[minmax(80px,150px)_minmax(80px,150px)_minmax(80px,125px)_minmax(70px,90px)_minmax(80px,120px)] 
           gap-x-2 md:gap-x-3 lg:gap-x-2 items-center font-medium py-2 px-0 md:px-4 text-sm"
         >
@@ -75,13 +84,15 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
             return (
               <div
                 key={job.id}
-                className={`grid grid-cols-1 md:grid-cols-5 
+                className={`text-sm grid grid-cols-1 md:grid-cols-5 
                   lg:grid-cols-[minmax(80px,150px)_minmax(80px,150px)_minmax(80px,125px)_minmax(70px,90px)_minmax(80px,120px)] 
                   gap-x-2 md:gap-x-3 lg:gap-x-2 items-start md:items-center py-2 px-0 md:px-4
-                  cursor-pointer hover:md:bg-muted/50 md:border-b last:border-b-0 text-sm
+                  cursor-pointer hover:md:bg-muted/50 md:border-b last:border-b-0
+                  pointer-events-none md:pointer-events-auto
                   
-                  ${selectedJobId === job.id && "bg-muted pointer-events-none"
-                }`}
+                  ${
+                    selectedJobId === job.id && "bg-muted !pointer-events-none"
+                  }`}
                 onClick={() => {
                   if (!isEditing) {
                     router.push(`?job=${job.id}`, { scroll: false });
@@ -158,7 +169,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-1 pointer-events-auto">
+                  <div className="flex justify-end gap-1 !pointer-events-none">
                     {isEditing ? (
                       <>
                         <Button
@@ -168,6 +179,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                             e.stopPropagation();
                             await handleSave(job.id);
                           }}
+                          className="!pointer-events-auto"
                         >
                           <Check />
                         </Button>
@@ -178,6 +190,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                             e.stopPropagation();
                             handleCancel();
                           }}
+                          className="!pointer-events-auto"
                         >
                           <X />
                         </Button>
@@ -193,6 +206,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                             await mutate("/api/jobs");
                             await mutate("/api/jobs/status-summary");
                           }}
+                          className="!pointer-events-auto"
                         >
                           <Trash2 />
                         </Button>
@@ -206,6 +220,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                             e.stopPropagation();
                             router.push(`/dashboard/jobs/${job.id}`);
                           }}
+                          className="!pointer-events-auto"
                         >
                           <Eye />
                         </Button>
@@ -221,6 +236,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                               status: job.status,
                             });
                           }}
+                          className="!pointer-events-auto"
                         >
                           <Pencil />
                         </Button>
@@ -297,7 +313,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                     : "-"}
                 </div>
 
-                <div className="hidden md:block text-right space-x-1 pointer-events-auto">
+                <div className="hidden md:block text-right space-x-1 !pointer-events-none">
                   {isEditing ? (
                     <>
                       <Button
@@ -307,6 +323,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                           e.stopPropagation();
                           await handleSave(job.id);
                         }}
+                        className="!pointer-events-auto"
                       >
                         <Check />
                       </Button>
@@ -317,6 +334,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                           e.stopPropagation();
                           handleCancel();
                         }}
+                        className="!pointer-events-auto"
                       >
                         <X />
                       </Button>
@@ -332,6 +350,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                           await mutate("/api/jobs");
                           await mutate("/api/jobs/status-summary");
                         }}
+                        className="!pointer-events-auto"
                       >
                         <Trash2 />
                       </Button>
@@ -345,6 +364,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                           e.stopPropagation();
                           router.push(`/dashboard/jobs/${job.id}`);
                         }}
+                        className="!pointer-events-auto"
                       >
                         <Eye />
                       </Button>
@@ -360,6 +380,7 @@ const JobList = ({ selectedJobId }: { selectedJobId?: string | null }) => {
                             status: job.status,
                           });
                         }}
+                        className="!pointer-events-auto"
                       >
                         <Pencil />
                       </Button>
