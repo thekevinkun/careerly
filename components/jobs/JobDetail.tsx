@@ -156,7 +156,7 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
 
   return (
     <ScrollArea className="h-full w-full">
-      <div className="p-6 flex flex-col gap-6">
+      <div className="px-4 py-6 lg:p-6 flex flex-col gap-6">
         <Card className="shadow-lg">
           <CardHeader>
             {editingField === "title" ? (

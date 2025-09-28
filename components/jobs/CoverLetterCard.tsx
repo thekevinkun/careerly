@@ -32,7 +32,7 @@ const CoverLetterCard = ({ coverLetter, index, mutate }: CoverLetterCardProps) =
 
   return (
     <div className="max-w-3xl mt-5">
-      <Card key={coverLetter.id} className="w-full p-4 shadow-sm relative">
+      <Card key={coverLetter.id} className="bg-white-card w-full p-4 shadow-sm relative">
         {/* Content */}
         <div className="prose prose-sm max-w-none text-muted-foreground">
           <ReactMarkdown>{coverLetter.content}</ReactMarkdown>

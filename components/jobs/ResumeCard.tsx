@@ -32,7 +32,7 @@ const ResumeCard = ({ resume, index, mutate }: ResumeCardProps) => {
 
   return (
     <div className="max-w-xl mt-5">
-      <Card key={resume.id} className="w-full p-4 shadow-sm relative">
+      <Card key={resume.id} className="bg-white-card w-full p-4 shadow-sm relative">
         {/* Content */}
         <div className="prose prose-sm max-w-none text-muted-foreground">
           <ReactMarkdown>{resume.content}</ReactMarkdown>
