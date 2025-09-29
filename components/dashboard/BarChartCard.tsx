@@ -46,27 +46,6 @@ const BarChartCard = () => {
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  useEffect(() => {
-    const handleMove = (e: MouseEvent) => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      const rect = container.getBoundingClientRect();
-      const isInside =
-        e.clientX >= rect.left &&
-        e.clientX <= rect.right &&
-        e.clientY >= rect.top &&
-        e.clientY <= rect.bottom;
-
-      if (!isInside) {
-        setHovered(null);
-      }
-    };
-
-    document.addEventListener("mousemove", handleMove);
-    return () => document.removeEventListener("mousemove", handleMove);
-  }, []);
-
   if (isLoading) {
     return (
       <Card className="flex flex-col !px-0 flex-1">
@@ -103,7 +82,10 @@ const BarChartCard = () => {
       </CardHeader>
 
       {/* containerRef used to position tooltip relative to this element */}
-      <CardContent ref={containerRef} className="flex-1 min-h-[137px] relative">
+      <CardContent
+        ref={containerRef}
+        className="flex-1 min-h-[137px] lg:min-h-auto relative"
+      >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={chartData}

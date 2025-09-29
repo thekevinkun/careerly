@@ -14,7 +14,6 @@ import { toast } from "sonner";
 import { Job, JobListProps } from "@/types/globals";
 import { statusClass } from "@/lib/helpers";
 
-
 const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
   const { mutate } = useSWRConfig();
   const router = useRouter();
@@ -63,11 +62,11 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
   };
 
   return (
-    <div className="h-[65vh] md:h-[57vh] lg:h-[60vh] w-full overflow-hidden">
+    <div className="h-full w-full overflow-hidden">
       <div className="hidden md:block sticky top-0 bg-white/90 backdrop-blur-sm z-10 md:shadow-sm">
         <div
           className="grid grid-cols-1 md:grid-cols-5 
-          lg:grid-cols-[minmax(80px,150px)_minmax(80px,150px)_minmax(80px,125px)_minmax(70px,90px)_minmax(80px,120px)] 
+          lg:grid-cols-[minmax(110px,125px)_minmax(115px,135px)_minmax(110px,125px)_minmax(100px,125px)_minmax(80px,100px)] 
           gap-x-2 md:gap-x-3 lg:gap-x-2 items-center font-medium py-2 px-0 md:px-4 text-sm"
         >
           <div className="hidden md:block text-foreground">Title</div>
@@ -78,7 +77,7 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
         </div>
       </div>
 
-      <ScrollArea className="h-full md:h-[57vh-63px] lg:h-[calc(60vh-67px)] w-full">
+      <ScrollArea className="h-[60vh] md:h-[48vh] w-full">
         <div className="min-w-full sm:min-w-[600px] p-0 pr-3 md:pr-0">
           {data.map((job: Job) => {
             const isEditing = editingId === job.id;

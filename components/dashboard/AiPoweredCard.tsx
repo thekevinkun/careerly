@@ -56,16 +56,22 @@ const AiPoweredCard = ({
       setShowModal(true);
     } catch (err) {
       console.error(err);
-      toast.error(err instanceof Error ? err.message : "Something went wrong generating suggestions.");
+      toast.error(
+        err instanceof Error
+          ? err.message
+          : "Something went wrong generating suggestions."
+      );
     } finally {
       setLoading(false);
     }
   };
-  
+
   return (
     <>
-      <Card className={`min-h-[192px] !pt-3 !pb-5 !px-0 bg-ai-card 
-            ${isLoading && "animate-pulse"}`}>
+      <Card
+        className={`min-h-[192px] lg:min-h-auto !pt-3 !pb-5 !px-0 bg-ai-card 
+            ${isLoading && "animate-pulse"}`}
+      >
         {!isLoading && (
           <>
             <CardHeader>

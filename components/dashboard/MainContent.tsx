@@ -24,7 +24,7 @@ const MainContent = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {/* Job applications */}
           <section className="order-2 lg:order-1 col-span-2 flex flex-col">
-            <Card className="h-full w-full flex flex-col px-0 md:!px-2 lg:!pb-0.5">
+            <Card className="md:min-h-[445px] w-full flex flex-col px-0 md:!px-2 lg:!pb-0.5">
               <CardHeader>
                 <CardTitle>Job Applications</CardTitle>
               </CardHeader>
