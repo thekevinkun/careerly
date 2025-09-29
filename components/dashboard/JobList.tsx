@@ -9,16 +9,11 @@ import { Eye, Pencil, Check, Trash2, X } from "lucide-react";
 
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
-import { Job } from "@/types/globals";
+import { Job, JobListProps } from "@/types/globals";
 import { statusClass } from "@/lib/helpers";
 
-interface JobListProps {
-  data?: Job[];
-  error?: any;
-  isLoading?: boolean;
-  selectedJobId?: string | null;
-}
 
 const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
   const { mutate } = useSWRConfig();
@@ -46,14 +41,20 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
     );
 
   const handleSave = async (jobId: string) => {
-    await fetch(`/api/jobs/${jobId}`, {
+    const res = await fetch(`/api/jobs/${jobId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(editValues),
     });
-    setEditingId(null);
-    await mutate("/api/jobs"); // refersh list of jobs
-    await mutate("/api/jobs/status-summary"); // refersh chart
+
+    if (res.ok) {
+      toast.success("Successfully updated job.");
+      setEditingId(null);
+      await mutate("/api/jobs"); // refersh list of jobs
+      await mutate("/api/jobs/status-summary"); // refersh chart
+    } else {
+      toast.error("Something went wrong. Failed to update your job.");
+    }
   };
 
   const handleCancel = () => {

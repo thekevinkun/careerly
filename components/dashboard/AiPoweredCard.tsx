@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 import AiResultDialog from "../modals/AiResultDialog";
 
@@ -55,11 +56,12 @@ const AiPoweredCard = ({
       setShowModal(true);
     } catch (err) {
       console.error(err);
-      alert("Something went wrong generating suggestions.");
+      toast.error(err instanceof Error ? err.message : "Something went wrong generating suggestions.");
     } finally {
       setLoading(false);
     }
   };
+  
   return (
     <>
       <Card className={`min-h-[192px] !pt-3 !pb-5 !px-0 bg-ai-card 

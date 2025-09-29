@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { toast } from "sonner";
 import { Clipboard, Download, Trash2 } from "lucide-react";
 
 import { CoverLetterCardProps } from "@/types/globals";
@@ -21,10 +22,13 @@ const CoverLetterCard = ({ coverLetter, index, mutate }: CoverLetterCardProps) =
     if (!confirm("Delete this coverLetter?")) return;
     try {
       setDeleting(true);
-      await fetch(`/api/coverLetters/${coverLetter.id}`, { method: "DELETE" });
+      const res = await fetch(`/api/coverLetters/${coverLetter.id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Something went wrong. Failed to delete cover letter.");
+      
+      toast.success("Successfully deleted resume.");
       mutate();
     } catch (error) {
-      alert("Failed to delete cover letter. Please try again.");
+      toast.error(error instanceof Error ? error.message : "Something went wrong. Please try again later.");
     } finally {
       setDeleting(false);
     }

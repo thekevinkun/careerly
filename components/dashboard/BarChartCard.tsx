@@ -46,6 +46,27 @@ const BarChartCard = () => {
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      const container = containerRef.current;
+      if (!container) return;
+
+      const rect = container.getBoundingClientRect();
+      const isInside =
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom;
+
+      if (!isInside) {
+        setHovered(null);
+      }
+    };
+
+    document.addEventListener("mousemove", handleMove);
+    return () => document.removeEventListener("mousemove", handleMove);
+  }, []);
+
   if (isLoading) {
     return (
       <Card className="flex flex-col !px-0 flex-1">
@@ -73,27 +94,6 @@ const BarChartCard = () => {
       </Card>
     );
   }
-
-  useEffect(() => {
-    const handleMove = (e: MouseEvent) => {
-      const container = containerRef.current;
-      if (!container) return;
-
-      const rect = container.getBoundingClientRect();
-      const isInside =
-        e.clientX >= rect.left &&
-        e.clientX <= rect.right &&
-        e.clientY >= rect.top &&
-        e.clientY <= rect.bottom;
-
-      if (!isInside) {
-        setHovered(null);
-      }
-    };
-
-    document.addEventListener("mousemove", handleMove);
-    return () => document.removeEventListener("mousemove", handleMove);
-  }, []);
 
   return (
     <Card className="flex flex-col !px-0 flex-1">

@@ -38,6 +38,13 @@ export interface Job {
   coverLetters: CoverLetter[];
 }
 
+export interface JobListProps {
+  data?: Job[];
+  error?: any;
+  isLoading?: boolean;
+  selectedJobId?: string | null;
+}
+
 export interface AiResultDialogProps {
   selectedJobId: string | null;
   open: boolean;

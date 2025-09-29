@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 
 import AiResultDialog from "@/components/modals/AiResultDialog";
 import ResumeCard from "./ResumeCard";
@@ -82,23 +83,30 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
     setLoading(false);
 
     if (res.ok) {
+      toast.success("Successfully added note.");
       setNewNote("");
       setEditingField(null);
       mutate();
     } else {
-      alert("Failed to add note");
+      toast.error("Failed to add note. Try again later.");
     }
   };
 
   // Handle save
   const handleSave = async (field: string) => {
-    await fetch(`/api/jobs/${job.id}`, {
+    const res = await fetch(`/api/jobs/${job.id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ [field]: editValues[field] }),
     });
-    setEditingField(null);
-    mutate();
+
+    if (res.ok) {
+      toast.success("Successfully updated job.");
+      setEditingField(null);
+      mutate();
+    } else {
+      toast.error("Something went wrong. Failed to update your job.");
+    }
   };
 
   const handleGenerateResumeWithAI = async () => {
@@ -111,7 +119,7 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
         method: "POST",
       });
 
-      if (!resumeRes.ok) throw new Error("Failed to generate resume");
+      if (!resumeRes.ok) throw new Error("Something went wrong. Failed to generate resume.");
       const resumeData = await resumeRes.json();
 
       setAiResult({
@@ -122,7 +130,7 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
       setShowModal(true);
     } catch (err) {
       console.error(err);
-      alert("Something went wrong generating resume.");
+      toast.error(error instanceof Error ? error.message : "Something went wrong. Please try again later.");
     } finally {
       setLoadingAiGenerateResume(false);
     }
@@ -137,7 +145,7 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
       const coverRes = await fetch(`/api/jobs/${jobId}/cover-letter-generate`, {
         method: "POST",
       });
-      if (!coverRes.ok) throw new Error("Failed to generate cover letter");
+      if (!coverRes.ok) throw new Error("Something went wrong. Failed to generate cover letter.");
       const coverData = await coverRes.json();
 
       setAiResult({
@@ -148,7 +156,7 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
       setShowModal(true);
     } catch (err) {
       console.error(err);
-      alert("Something went wrong generating cover letter.");
+      toast.error(error instanceof Error ? error.message : "Something went wrong. Please try again later.");
     } finally {
       setLoadingAiGenerateCoverLetter(false);
     }

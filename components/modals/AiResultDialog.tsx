@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 
 import { AiResultDialogProps } from "@/types/globals";
 
@@ -48,12 +49,13 @@ const AiResultDialog = ({
           isAiGenerated: aiResult.isAiGenerated,
         }),
       });
+      toast.success("Successfully saved resume. Check it in the job detail page.");
       setResumeState("saved");
       mutate?.();
     } catch (err) {
+      toast.error("Something went wrong. Failed to save resume.");
       console.error("Error saving resume:", err);
       setResumeState("idle");
-      alert("Failed to save resume.");
     }
   };
 
@@ -69,12 +71,13 @@ const AiResultDialog = ({
           isAiGenerated: aiResult.isAiGenerated,
         }),
       });
+      toast.success("Successfully saved cover letter. Check it in the job detail page.");
       setCoverState("saved");
       mutate?.();
     } catch (err) {
+      toast.error("Something went wrong. Failed to save cover letter.");
       console.error("Error saving cover letter:", err);
       setCoverState("idle");
-      alert("Failed to save cover letter.");
     }
   };
 

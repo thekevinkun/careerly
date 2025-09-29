@@ -3,6 +3,8 @@ import { Inter, Poppins } from  "next/font/google";
 import Providers from "./providers";
 import "@/styles/globals.css";
 
+import { Toaster } from "@/components/ui/sonner";
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({ subsets: ["latin"], weight: ["600", "700"], variable: "--font-poppins" })
 
@@ -21,6 +23,7 @@ export default function RootLayout({
       <body>
         <Providers>
           {children}
+          <Toaster />
         </Providers>
       </body>
     </html>

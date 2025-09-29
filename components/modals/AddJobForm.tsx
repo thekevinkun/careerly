@@ -25,6 +25,7 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
+import { toast } from "sonner"
 import { CalendarIcon } from "lucide-react";
 import moment from "moment";
 
@@ -61,11 +62,12 @@ const AddJobForm = () => {
     setLoading(false);
 
     if (res.ok) {
+      toast.success("Successfully added job.");
       mutate("/api/jobs"); // refersh list of jobs
       mutate("/api/jobs/status-summary"); // refersh chart
       handleClose();
     } else {
-      alert("Failed to add job");
+      toast.error("Failed to add job. Try again later.");
     }
   };
 

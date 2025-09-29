@@ -10,6 +10,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner"
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { ApplicationNote } from "@/types/globals";
@@ -41,10 +42,11 @@ const NotesSection = ({ selectedJobId }: { selectedJobId?: string | null}) => {
     setLoading(false);
 
     if (res.ok) {
+      toast.success("Successfully added note.");
       setNewNote("");
       mutate(); // refresh list
     } else {
-      alert("Failed to add note");
+      toast.error("Failed to add note. Try again later.");
     }
   };
 

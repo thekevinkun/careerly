@@ -139,3 +139,42 @@ html, body {
     display: none;
   }
 }
+
+/* SONNER TOAST CUSTOMIZATION */
+[data-sonner-toast] {
+  border: none !important;                /* Remove border */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important; /* Soft shadow */
+  backdrop-filter: blur(6px) !important;  /* Subtle glossy effect */
+}
+
+/* SUCCESS  */
+[data-sonner-toast][data-type="success"] {
+  background: hsl(var(--primary)) !important;
+  color: hsl(var(--primary-foreground)) !important;
+}
+
+/* ERROR */
+[data-sonner-toast][data-type="error"] {
+  background: hsl(var(--destructive)) !important;
+  color: hsl(var(--destructive-foreground)) !important;
+}
+
+/* INFO */
+[data-sonner-toast][data-type="info"] {
+  background: hsl(var(--accent)) !important;
+  color: hsl(var(--accent-foreground)) !important;
+}
+
+/* WARNING */
+[data-sonner-toast][data-type="warning"] {
+  background: hsl(var(--warning)) !important;
+  color: hsl(var(--warning-foreground)) !important;
+}
+
+/* DEFAULT / NORMAL */
+[data-sonner-toast][data-type="default"],
+[data-sonner-toast]:not([data-type]) {
+  background: hsl(var(--popover)) !important;
+  color: hsl(var(--popover-foreground)) !important;
+}
+
