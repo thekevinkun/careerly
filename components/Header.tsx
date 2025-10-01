@@ -43,7 +43,7 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
         </div>
 
         <span className="text-sm text-muted-foreground hidden sm:block">
-          {session?.user?.name}
+          Hi, <b>{session?.user?.name ? session.user.name : "Welcome back"}</b>
         </span>
         <Avatar className="h-8 w-8">
           {session?.user?.avatarUrl ? (

@@ -46,10 +46,10 @@ const RegisterPage = () => {
       if (signInResult?.ok) {
         router.push("/dashboard");
       } else {
-        setError(signInResult?.error || "Sign-in failed");
+        setError(signInResult?.error || "Something went wrong while you're register. Please try again later.");
       }
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "An unknown error occurred");
+      setError(err instanceof Error ? err.message : "Something went wrong while you're register. Please try again later.");
     } finally {
       setLoading(false);
     }
