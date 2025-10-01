@@ -2,11 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
 import { Menu } from "lucide-react";
 
 import AddJobForm from "@/components/modals/AddJobForm";
+import LogoutButton from "./LogoutButton";
 
 const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   const pathname = usePathname();
@@ -45,16 +53,36 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
         <span className="text-sm text-muted-foreground hidden sm:block">
           Hi, <b>{session?.user?.name ? session.user.name : "Welcome back"}</b>
         </span>
-        <Avatar className="h-8 w-8">
-          {session?.user?.avatarUrl ? (
-            <AvatarImage
-              src={session.user.avatarUrl}
-              alt={session.user.name ?? ""}
-            />
-          ) : (
-            <AvatarFallback>{session?.user?.name?.[0] ?? "U"}</AvatarFallback>
-          )}
-        </Avatar>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Avatar className="h-8 w-8 cursor-pointer">
+              {session?.user?.avatarUrl ? (
+                <AvatarImage
+                  src={session.user.avatarUrl}
+                  alt={session.user.name ?? ""}
+                />
+              ) : (
+                <AvatarFallback>
+                  {session?.user?.name?.[0] ?? "U"}
+                </AvatarFallback>
+              )}
+            </Avatar>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent align="end" className="w-44">
+            <DropdownMenuItem onClick={() => console.log("Go to profile")}>
+              Profile
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => console.log("Go to settings")}>
+              Settings
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="hover:!bg-transparent">
+              <LogoutButton />
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

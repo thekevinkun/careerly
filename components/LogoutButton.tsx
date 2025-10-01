@@ -5,7 +5,7 @@ import { Button } from "./ui/button";
 
 const LogoutButton = () => {
   return (
-    <Button className="w-full" onClick={() => signOut({ callbackUrl: "/login" })}>
+    <Button variant="destructive" className="w-full" onClick={() => signOut({ callbackUrl: "/login" })}>
       Logout
     </Button>
   );
