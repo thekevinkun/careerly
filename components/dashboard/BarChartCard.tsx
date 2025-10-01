@@ -52,7 +52,7 @@ const BarChartCard = () => {
         <CardHeader>
           <CardTitle>Applications by Status</CardTitle>
         </CardHeader>
-        <CardContent className="flex-1 min-h-[138px] flex items-center justify-center">
+        <CardContent className="flex-1 min-h-[125px]] sm:min-h-[138px] flex items-center justify-center">
           <p className="text-primary animate-pulse">Loading...</p>
         </CardContent>
       </Card>
@@ -65,7 +65,7 @@ const BarChartCard = () => {
         <CardHeader>
           <CardTitle>Applications by Status</CardTitle>
         </CardHeader>
-        <CardContent className="flex-1 min-h-[138px] flex items-center justify-center">
+        <CardContent className="flex-1 min-h-[125px] sm:min-h-[138px] flex items-center justify-center">
           <p className="text-muted-foreground text-sm text-center">
             No applications yet—start tracking your jobs!
           </p>
@@ -84,7 +84,7 @@ const BarChartCard = () => {
       {/* containerRef used to position tooltip relative to this element */}
       <CardContent
         ref={containerRef}
-        className="flex-1 min-h-[138px] relative"
+        className="flex-1 min-h-[125px] sm:min-h-[138px] relative"
       >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart

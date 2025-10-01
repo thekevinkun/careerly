@@ -140,6 +140,10 @@ html, body {
   }
 }
 
+.scroll-height > div {
+  height: 100%;  
+}
+
 /* SONNER TOAST CUSTOMIZATION */
 [data-sonner-toast] {
   border: none !important;                /* Remove border */
