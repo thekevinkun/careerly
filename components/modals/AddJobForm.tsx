@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/dialog";
+} from "@/components/ui/ClientDialog";
 import {
   Select,
   SelectTrigger,
@@ -25,8 +25,8 @@ import {
   SelectItem,
 } from "@/components/ui/select";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { toast } from "sonner"
 import { CalendarIcon } from "lucide-react";
+import { toast } from "sonner"
 import moment from "moment";
 
 const AddJobForm = () => {

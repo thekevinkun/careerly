@@ -66,7 +66,7 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
       <div className="hidden md:block sticky top-0 bg-white/90 backdrop-blur-sm z-10 md:shadow-sm">
         <div
           className="grid grid-cols-1 md:grid-cols-5 
-          lg:grid-cols-[minmax(110px,125px)_minmax(115px,135px)_minmax(110px,125px)_minmax(100px,125px)_minmax(80px,100px)] 
+          lg:grid-cols-[minmax(150px,1fr)_minmax(150px,1fr)_minmax(125px,1fr)_minmax(90px,1fr)_minmax(120px,1fr)]
           gap-x-2 md:gap-x-3 lg:gap-x-2 items-center font-medium py-2 px-0 md:px-4 text-sm"
         >
           <div className="hidden md:block text-foreground">Title</div>
@@ -78,15 +78,15 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
       </div>
 
       <ScrollArea className="h-[60vh] md:h-[48vh] w-full">
-        <div className="min-w-full sm:min-w-[600px] p-0 pr-3 md:pr-0">
+        <div className="min-w-full sm:min-w-[600px] pr-3 md:pr-0">
           {data.map((job: Job) => {
             const isEditing = editingId === job.id;
             return (
               <div
                 key={job.id}
                 className={`text-sm grid grid-cols-1 md:grid-cols-5 
-                  lg:grid-cols-[minmax(80px,150px)_minmax(80px,150px)_minmax(80px,125px)_minmax(70px,90px)_minmax(80px,120px)] 
-                  gap-x-2 md:gap-x-3 lg:gap-x-2 items-start md:items-center py-2 px-0 md:px-4
+                  lg:grid-cols-[minmax(150px,1fr)_minmax(150px,1fr)_minmax(125px,1fr)_minmax(90px,1fr)_minmax(120px,1fr)] 
+                  gap-x-2 md:gap-x-3 lg:gap-x-2 items-start md:items-center py-2.5 px-0 md:px-4
                   cursor-pointer hover:md:bg-muted/50 md:border-b last:border-b-0
                   pointer-events-none md:pointer-events-auto
                   
