@@ -69,7 +69,7 @@ const AiPoweredCard = ({
   return (
     <>
       <Card
-        className={`min-h-[200px] !pt-3 !pb-5 !px-0 bg-ai-card 
+        className={`md:min-h-[200px] !pt-3 !pb-5 !px-0 bg-ai-card 
             ${isLoading && "animate-pulse"}`}
       >
         {!isLoading && (

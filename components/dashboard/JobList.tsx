@@ -28,7 +28,7 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
   if (error) return <div className="text-destructive">Failed to load jobs</div>;
   if (isLoading)
     return (
-      <p className="min-h-[60vh] md:min-h-full w-full flex-center text-primary animate-pulse">
+      <p className="min-h-[55vh] md:min-h-full w-full flex-center text-primary animate-pulse">
         Loading jobs...
       </p>
     );
@@ -62,7 +62,7 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
   };
 
   return (
-    <div className="h-full w-full overflow-hidden">
+    <div className="h-full md:h-full w-full overflow-hidden">
       <div className="hidden md:block sticky top-0 bg-white/90 backdrop-blur-sm z-10 md:shadow-sm">
         <div
           className="grid grid-cols-1 md:grid-cols-5 
@@ -77,7 +77,7 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
         </div>
       </div>
 
-      <ScrollArea className="h-[60vh] md:h-[48vh] w-full">
+      <ScrollArea className="h-[55vh] md:h-[45vh] w-full">
         <div className="min-w-full sm:min-w-[600px] pr-3 md:pr-0">
           {data.map((job: Job) => {
             const isEditing = editingId === job.id;
@@ -86,7 +86,7 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
                 key={job.id}
                 className={`text-sm grid grid-cols-1 md:grid-cols-5 
                   lg:grid-cols-[minmax(150px,1fr)_minmax(150px,1fr)_minmax(125px,1fr)_minmax(90px,1fr)_minmax(120px,1fr)] 
-                  gap-x-2 md:gap-x-3 lg:gap-x-2 items-start md:items-center py-2.5 px-0 md:px-4
+                  gap-x-2 md:gap-x-3 lg:gap-x-2 items-start md:items-center py-2.75 px-0 md:px-4
                   cursor-pointer hover:md:bg-muted/50 md:border-b last:border-b-0
                   pointer-events-none md:pointer-events-auto
                   

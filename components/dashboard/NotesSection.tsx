@@ -105,7 +105,7 @@ const NotesSection = ({ selectedJobId }: { selectedJobId?: string | null}) => {
               )}
 
               <ScrollArea
-                className={`w-full ${showNoteInput ? "h-[14vh]" : "h-[22vh]"}`}
+                className={`w-full ${showNoteInput ? "h-[15vh]" : "h-[20vh]"}`}
               >
                 <Table>
                   <TableBody>
@@ -139,7 +139,7 @@ const NotesSection = ({ selectedJobId }: { selectedJobId?: string | null}) => {
             </div>
 
             {showNoteInput && (
-              <div className="flex items-center gap-2 mt-2 pb-1">
+              <div className="flex items-center gap-2 mt-2.5 pb-1">
                 <Input
                   value={newNote}
                   onChange={(e) => setNewNote(e.target.value)}

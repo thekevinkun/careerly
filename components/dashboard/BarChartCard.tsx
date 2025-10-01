@@ -45,6 +45,30 @@ const BarChartCard = () => {
   } | null>(null);
 
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const barRef = useRef<SVGSVGElement | null>(null);
+
+  // Hide tooltip if mouse leaves the CardContent area entirely
+  useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      const container = barRef.current;
+      if (!container) return;
+
+      const rect = container.getBoundingClientRect();
+      const isInside =
+        e.clientX >= rect.left &&
+        e.clientX <= rect.right &&
+        e.clientY >= rect.top &&
+        e.clientY <= rect.bottom;
+
+      if (!isInside) {
+        setHovered(null);
+      }
+    };
+
+    document.addEventListener("mousemove", handleMove);
+    return () => document.removeEventListener("mousemove", handleMove);
+  }, []);
+
 
   if (isLoading) {
     return (
@@ -84,10 +108,11 @@ const BarChartCard = () => {
       {/* containerRef used to position tooltip relative to this element */}
       <CardContent
         ref={containerRef}
-        className="flex-1 min-h-[125px] sm:min-h-[138px] relative"
+        className="relative flex-1 min-h-[125px] sm:min-h-[138px]"
       >
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
+            ref={barRef}
             data={chartData}
             layout="vertical"
             margin={{ top: 0, right: 10, left: 0, bottom: 0 }}
