@@ -1,8 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import moment from "moment";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -20,6 +22,16 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   const pathname = usePathname();
   const { data: session } = useSession();
   const isJobDetailPage = pathname.startsWith("/dashboard/jobs/");
+
+  const [currentTime, setCurrentTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000); // update every second
+
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <header className="h-14 bg-white/80 backdrop-blur-md shadow-sm pl-2 pr-4 lg:!px-6 flex-between z-30">
@@ -50,8 +62,8 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
           )}
         </div>
 
-        <span className="text-sm text-muted-foreground hidden sm:block">
-          Hi, <b>{session?.user?.name ? session.user.name : "Welcome back"}</b>
+        <span className="text-sm text-muted-foreground hidden md:block">
+          {moment(currentTime).format("dddd, D MMM YYYY · hh:mm")}
         </span>
 
         <DropdownMenu>
@@ -70,7 +82,13 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
             </Avatar>
           </DropdownMenuTrigger>
 
-          <DropdownMenuContent align="end" className="w-44">
+          <DropdownMenuContent align="end" className="w-48 sm:w-56">
+            <div className="px-2 py-3 text-sm">
+              <p>Hi, <span className="font-semibold">{session?.user?.name}</span></p>
+            </div>
+
+            <DropdownMenuSeparator />
+
             <DropdownMenuItem onClick={() => console.log("Go to profile")}>
               Profile
             </DropdownMenuItem>
