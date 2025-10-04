@@ -1,17 +1,21 @@
-import { AuthOptions, SessionStrategy, Account, Profile, Session, User } from "next-auth";
+import { AuthOptions } from "next-auth";
+import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { JWT } from "next-auth/jwt";
 import bcrypt from "bcrypt";
-
 import { prisma } from "@/lib/prisma";
 
 export const authOptions: AuthOptions = {
+  // Prisma Adapter handles User, Account, Session, VerificationToken
+  adapter: PrismaAdapter(prisma),
+
+  // DB-based sessions now
+  session: {
+    strategy: "jwt",
+  },
+
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID!,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-    }),
+    // Credentials Login
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -23,93 +27,88 @@ export const authOptions: AuthOptions = {
           throw new Error("Please enter both email and password");
         }
 
-        // find user in database
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
 
-        if (!user) {
-          throw new Error("No user found with this email");
-        };
+        if (!user) throw new Error("No user found with this email");
 
-        // compare password
+        if (!user.passwordHash) throw new Error("Please use Google sign-in for this account");
+
         const isValid = await bcrypt.compare(
           credentials.password,
           user.passwordHash
         );
 
-        if (!isValid) {
-          throw new Error("Incorrect password");
-        };
+        if (!isValid) throw new Error("Incorrect password");
 
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          avatarUrl: user.avatarUrl,
-        };
+        return user;
       },
     }),
+
+    // Google Login
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+
+    // GITHUB PROVIDER (commented until ready)
+    // GitHubProvider({
+    //   clientId: process.env.GITHUB_CLIENT_ID!,
+    //   clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+    // }),
+
+    // LINKEDIN PROVIDER (example placeholder)
+    // LinkedInProvider({
+    //   clientId: process.env.LINKEDIN_CLIENT_ID!,
+    //   clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
+    // }),
   ],
-  session: {
-    strategy: "jwt" as SessionStrategy, // store session as JWT (no extra DB tables needed)
-  },
+
   callbacks: {
-    async jwt({ token, user, account, profile }: { token: JWT; user?: User, account?: Account | null, profile?: Profile }) {
-      // For credentials login, attach userId to JWT
+    async jwt({ token, user }) {
       if (user) {
-        token.id = user.id; 
-        token.avatarUrl = (user as any).avatarUrl;
+        token.id = user.id;
+        token.image = user.image || null;
       }
-
-      if (account?.provider === "google") {
-        const existingUser = await prisma.user.findUnique({
-          where: { email: token.email! },
-        });
-
-        if (!existingUser) {
-          const newUser = await prisma.user.create({
-            data: {
-              name: profile?.name || "New User",
-              email: token.email!,
-              avatarUrl: (profile as { picture?: string })?.picture ?? null,
-              passwordHash: "", // No password for OAuth users
-            },
-          });
-          token.id = newUser.id;
-          token.avatarUrl = newUser.avatarUrl; 
-        } else {
-          token.id = existingUser.id;
-          token.avatarUrl = existingUser.avatarUrl;
-        }
-      }
-
+      
       return token;
     },
-    async session({ session, token }: { session: Session; token: JWT }) {
+
+    async session({ session, token }) {
       if (token?.id) {
         session.user = {
-            ...session.user,
-            id: token.id as string,
-            avatarUrl: (token as any).avatarUrl || null,
-        }
+          ...session.user,
+          id: token.id as string,
+          image: token.image as string | null,
+        };
       }
       return session;
     },
-    // Redirect to custom callback page after Google OAuth
+
     async redirect({ url, baseUrl }) {
-      // If coming from Google OAuth, redirect to our callback page
+      // Preserve your original redirect logic
       if (url.includes("/api/auth/callback/google")) {
         return `${baseUrl}/auth/google-callback`;
       }
-      // Otherwise redirect to the URL or dashboard
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
     },
   },
+
+  events: {
+    async signIn({ user }) {
+      // Track last login for all sign-ins
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { lastLogin: new Date() },
+      });
+    },
+  },
+
   pages: {
-    signIn: "/login", // keep for credentials
+    signIn: "/login",
     error: "/login",
-  }
+  },
 };
