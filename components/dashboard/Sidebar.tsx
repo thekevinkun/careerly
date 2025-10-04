@@ -228,9 +228,9 @@ const Sidebar = () => {
 
             <div className="relative flex items-center gap-3 w-full">
               <Avatar className="h-10 w-10">
-                {session?.user?.avatarUrl || session?.user?.avatarUrl ? (
+                {session?.user?.image ? (
                   <AvatarImage
-                    src={session.user.avatarUrl || session.user.avatarUrl!}
+                    src={session.user.image}
                     alt={session.user.name || ""}
                   />
                 ) : (

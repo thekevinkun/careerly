@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import moment from "moment";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
@@ -19,6 +19,7 @@ import AddJobForm from "@/components/modals/AddJobForm";
 import LogoutButton from "./LogoutButton";
 
 const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
+  const router = useRouter();
   const pathname = usePathname();
   const { data: session } = useSession();
   const isJobDetailPage = pathname.startsWith("/dashboard/jobs/");
@@ -69,9 +70,9 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Avatar className="h-8 w-8 cursor-pointer">
-              {session?.user?.avatarUrl ? (
+              {session?.user?.image ? (
                 <AvatarImage
-                  src={session.user.avatarUrl}
+                  src={session.user.image}
                   alt={session.user.name ?? ""}
                 />
               ) : (
@@ -89,10 +90,10 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem onClick={() => console.log("Go to profile")}>
+            <DropdownMenuItem onClick={() => router.push("/account/profile")}>
               Profile
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => console.log("Go to settings")}>
+            <DropdownMenuItem onClick={() => router.push("/account/settings")}>
               Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
