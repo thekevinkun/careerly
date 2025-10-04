@@ -23,6 +23,7 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   const pathname = usePathname();
   const { data: session } = useSession();
   const isJobDetailPage = pathname.startsWith("/dashboard/jobs/");
+  const isAccountPage = pathname.startsWith("/account/");
 
   const [currentTime, setCurrentTime] = useState(new Date());
 
@@ -35,33 +36,40 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   }, []);
 
   return (
-    <header className="h-14 bg-white/80 backdrop-blur-md shadow-sm pl-2 pr-4 lg:!px-6 flex-between z-30">
-      <div className="flex items-center gap-3">
+    <header className="h-14 bg-white/80 backdrop-blur-md shadow-sm !pl-1.5 lg:!pl-6 !px-6 flex-between z-30">
+      <div className="flex items-center gap-2">
         {/* Hamburger only visible on mobile */}
-        <button
-          onClick={onMenuClick}
-          className="lg:hidden p-2 rounded hover:bg-muted"
-        >
-          <Menu className="h-6 w-6" />
-        </button>
-        <h1 className="logo text-xl sm:text-2xl font-bold text-primary">
-          Careerly
-        </h1>
+        {!isAccountPage &&
+          <button
+            onClick={onMenuClick}
+            className="lg:hidden p-2 rounded hover:bg-muted"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+        }
+
+        <Link href="/" className={`${isAccountPage ? "ml-2 lg:ml-0" : "hidden lg:block"}`}>
+          <h1 className="logo text-2xl font-bold text-primary">
+            Careerly
+          </h1>
+        </Link>
       </div>
 
       <div className="flex items-center gap-3">
-        <div className="w-fit block lg:hidden">
-          {isJobDetailPage ? (
-            <Link
-              href="/dashboard"
-              className="!text-xs btn btn-primary cursor-default"
-            >
-              ← Back to Dashboard
-            </Link>
-          ) : (
-            <AddJobForm />
-          )}
-        </div>
+        {!isAccountPage &&
+          <div className="w-fit block lg:hidden">
+            {isJobDetailPage ? (
+              <Link
+                href="/dashboard"
+                className="!text-xs btn btn-primary cursor-default"
+              >
+                ← Back to Dashboard
+              </Link>
+            ) : (
+              <AddJobForm />
+            )}
+          </div>
+        }
 
         <span className="text-sm text-muted-foreground hidden md:block">
           {moment(currentTime).format("dddd, D MMM YYYY · hh:mm")}
@@ -69,7 +77,7 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Avatar className="h-8 w-8 cursor-pointer">
+            <Avatar className="h-9 w-9 cursor-pointer">
               {session?.user?.image ? (
                 <AvatarImage
                   src={session.user.image}

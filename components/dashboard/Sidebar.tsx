@@ -28,6 +28,7 @@ const initialCounts: Record<JobStatus, number> = {
   interviewing: 0,
   offer: 0,
   rejected: 0,
+  total: 0,
 };
 
 const Sidebar = () => {
@@ -43,10 +44,13 @@ const Sidebar = () => {
     return jobs.reduce(
       (acc, job) => {
         const status = job.status.toLowerCase() as JobStatus;
-        if (status in acc) acc[status]++;
+        if (status in acc) {
+          acc[status]++;
+          acc.total++;
+        }
         return acc;
       },
-      { ...initialCounts }
+      { ...initialCounts, total: 0 }
     );
   }, [jobs]);
 
@@ -82,6 +86,10 @@ const Sidebar = () => {
   return (
     <ScrollArea className="h-full w-full bg-white/80 backdrop-blur-md shadow-sm">
       <aside className="h-full w-80 lg:w-72 flex-shrink-0 flex flex-col p-6">
+        <Link href="/" className="lg:hidden">
+          <h1 className="logo text-2xl font-bold text-primary">Careerly</h1>
+        </Link>
+
         <div className="w-full hidden lg:block text-end">
           {isJobDetailPage ? (
             <Link
@@ -95,9 +103,11 @@ const Sidebar = () => {
           )}
         </div>
 
-        <div className="mt-5 flex sm:hidden">
-          <BarChartCard />
-        </div>
+        {counts.total > 0 && (
+          <div className="mt-5 flex sm:hidden">
+            <BarChartCard />
+          </div>
+        )}
 
         <nav className="mt-5 lg:mt-0 space-y-3 text-sm">
           {/* Quick Stats Section */}
@@ -153,51 +163,57 @@ const Sidebar = () => {
               Recent Activity
             </h3>
 
-            <div className="space-y-2 text-sm">
-              {/* ✅ 1. Last Applied Job */}
-              {jobs
-                .filter((job) => job.status === "applied")
-                .sort(
-                  (a, b) =>
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime()
-                )
-                .slice(0, 1)
-                .map((job) => (
-                  <div key={job.id} className="flex items-center gap-2">
-                    <span>✅</span>
-                    <span>
-                      You applied to <strong>{job.company}</strong>
-                    </span>
-                  </div>
-                ))}
+            {counts.total === 0 ? (
+              <p className="text-sm italic text-muted-foreground">
+                No activity yet.
+              </p>
+            ) : (
+              <div className="space-y-2 text-sm">
+                {/* ✅ 1. Last Applied Job */}
+                {jobs
+                  .filter((job) => job.status === "applied")
+                  .sort(
+                    (a, b) =>
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime()
+                  )
+                  .slice(0, 1)
+                  .map((job) => (
+                    <div key={job.id} className="flex items-center gap-2">
+                      <span>✅</span>
+                      <span>
+                        You applied to <strong>{job.company}</strong>
+                      </span>
+                    </div>
+                  ))}
 
-              {/* ✅ 2. Last Interviewing Job */}
-              {jobs
-                .filter((job) => job.status === "interviewing")
-                .sort(
-                  (a, b) =>
-                    new Date(b.createdAt).getTime() -
-                    new Date(a.createdAt).getTime()
-                )
-                .slice(0, 1)
-                .map((job) => (
-                  <div key={job.id} className="flex items-center gap-2">
-                    <span>📅</span>
-                    <span>
-                      Interview at <strong>{job.company}</strong>
-                    </span>
-                  </div>
-                ))}
+                {/* ✅ 2. Last Interviewing Job */}
+                {jobs
+                  .filter((job) => job.status === "interviewing")
+                  .sort(
+                    (a, b) =>
+                      new Date(b.createdAt).getTime() -
+                      new Date(a.createdAt).getTime()
+                  )
+                  .slice(0, 1)
+                  .map((job) => (
+                    <div key={job.id} className="flex items-center gap-2">
+                      <span>📅</span>
+                      <span>
+                        Interview at <strong>{job.company}</strong>
+                      </span>
+                    </div>
+                  ))}
 
-              {/* ✅ 3. Pending Updates */}
-              <div className="flex items-center gap-2">
-                <span>⏳</span>
-                <span>
-                  {counts.applied + counts.interviewing} pending updates
-                </span>
+                {/* ✅ 3. Pending Updates */}
+                <div className="flex items-center gap-2">
+                  <span>⏳</span>
+                  <span>
+                    {counts.applied + counts.interviewing} pending updates
+                  </span>
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </nav>
 

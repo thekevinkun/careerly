@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useSWRConfig } from "swr";
 
@@ -16,7 +16,7 @@ import {
   DialogTitle,
   DialogTrigger,
   DialogFooter,
-} from "@/components/ui/ClientDialog";
+} from "@/components/ui/dialog";
 import {
   Select,
   SelectTrigger,
@@ -35,8 +35,13 @@ const AddJobForm = () => {
   const isOpen = searchParams.get("modal") === "add-job";
   const [loading, setLoading] = useState(false);
   const { mutate } = useSWRConfig();
+  const [mounted, setMounted] = useState(false);
 
   const [appliedAt, setAppliedAt] = useState<Date | undefined>();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -77,6 +82,14 @@ const AddJobForm = () => {
 
   const handleClose = () => {
     router.push("/dashboard", { scroll: false });
+  }
+
+  if (!mounted) {
+    return (
+      <Button className="lg:w-full lg:mb-6">
+        + Add Job
+      </Button>
+    );
   }
 
   return (

@@ -83,7 +83,7 @@ const BarChartCard = () => {
     );
   }
 
-  if (!statusSummary || !chartData) {
+  if (!statusSummary || !chartData || total === 0) {
     return (
       <Card className="flex flex-col !px-0 flex-1">
         <CardHeader>
