@@ -2,6 +2,8 @@ import { AuthOptions } from "next-auth";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
+import GitHubProvider from "next-auth/providers/github";
+import LinkedInProvider from "next-auth/providers/linkedin";
 import bcrypt from "bcrypt";
 import { prisma } from "@/lib/prisma";
 
@@ -33,7 +35,8 @@ export const authOptions: AuthOptions = {
 
         if (!user) throw new Error("No user found with this email");
 
-        if (!user.passwordHash) throw new Error("Please use Google sign-in for this account");
+        if (!user.passwordHash)
+          throw new Error("Please use Google sign-in for this account");
 
         const isValid = await bcrypt.compare(
           credentials.password,
@@ -50,19 +53,35 @@ export const authOptions: AuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
     }),
 
-    // GITHUB PROVIDER (commented until ready)
-    // GitHubProvider({
-    //   clientId: process.env.GITHUB_CLIENT_ID!,
-    //   clientSecret: process.env.GITHUB_CLIENT_SECRET!,
-    // }),
+    // GITHUB PROVIDER
+    GitHubProvider({
+      clientId: process.env.GITHUB_CLIENT_ID!,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      allowDangerousEmailAccountLinking: true,
+    }),
 
-    // LINKEDIN PROVIDER (example placeholder)
-    // LinkedInProvider({
-    //   clientId: process.env.LINKEDIN_CLIENT_ID!,
-    //   clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
-    // }),
+    // LINKEDIN PROVIDER
+    LinkedInProvider({
+      clientId: process.env.LINKEDIN_CLIENT_ID!,
+      clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
+      authorization: {
+        params: { scope: "openid profile email" },
+      },
+      issuer: "https://www.linkedin.com",
+      jwks_endpoint: "https://www.linkedin.com/oauth/openid/jwks",
+      allowDangerousEmailAccountLinking: true,
+      profile(profile) {
+        return {
+          id: profile.sub,
+          name: profile.name,
+          email: profile.email,
+          image: profile.picture,
+        };
+      },
+    }),
   ],
 
   callbacks: {
@@ -71,26 +90,39 @@ export const authOptions: AuthOptions = {
         token.id = user.id;
         token.image = user.image || null;
       }
-      
+
       return token;
     },
 
     async session({ session, token }) {
       if (token?.id) {
+        // Fetch connected accounts
+        const accounts = await prisma.account.findMany({
+          where: { userId: token.id as string },
+          select: { provider: true },
+        });
+
         session.user = {
           ...session.user,
           id: token.id as string,
           image: token.image as string | null,
+          connectedProviders: accounts.map((acc) => acc.provider),
         };
       }
       return session;
     },
 
     async redirect({ url, baseUrl }) {
-      // Preserve your original redirect logic
+      // Google popup flow - redirect to google-callback page
       if (url.includes("/api/auth/callback/google")) {
         return `${baseUrl}/auth/google-callback`;
       }
+
+      // GitHub/LinkedIn account linking - redirect to oauth-callback
+      if (url.includes("/api/auth/callback/github") || url.includes("/api/auth/callback/linkedin")) {
+        return `${baseUrl}/auth/oauth-callback`;
+      }
+
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       else if (new URL(url).origin === baseUrl) return url;
       return baseUrl;
@@ -98,12 +130,20 @@ export const authOptions: AuthOptions = {
   },
 
   events: {
-    async signIn({ user }) {
+    async signIn({ user, account, isNewUser }) {
       // Track last login for all sign-ins
       await prisma.user.update({
         where: { id: user.id },
         data: { lastLogin: new Date() },
       });
+
+      // Store GitHub username if available
+      if (account?.provider === "github" && account.providerAccountId) {
+        await prisma.user.update({
+          where: { id: user.id },
+          data: { githubUsername: account.providerAccountId },
+        });
+      }
     },
   },
 

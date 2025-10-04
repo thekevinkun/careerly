@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-export default function GoogleCallbackPage() {
+export default function OAuthCallbackPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [isValidAccess, setIsValidAccess] = useState(false);
@@ -15,19 +15,19 @@ export default function GoogleCallbackPage() {
 
     if (!isPopup) {
       // Direct access - redirect immediately
-      router.replace("/dashboard");
+      router.replace("/account/profile");
       return;
     }
 
     setIsValidAccess(true);
 
     if (status === "authenticated" && session?.user) {
-      // Notify parent window of successful authentication
+      // Notify parent window
       window.opener.postMessage(
-        { type: "GOOGLE_AUTH_SUCCESS" },
+        { type: "OAUTH_SUCCESS" },
         window.location.origin
       );
-
+      
       setTimeout(() => {
         window.close();
       }, 100);
@@ -42,7 +42,7 @@ export default function GoogleCallbackPage() {
     <div className="min-h-screen flex items-center justify-center">
       <div className="text-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-        <p className="text-muted-foreground">Completing sign in...</p>
+        <p className="text-muted-foreground">Connecting account...</p>
       </div>
     </div>
   );

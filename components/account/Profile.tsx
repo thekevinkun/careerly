@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import useSWR from "swr";
 import moment from "moment";
@@ -14,6 +15,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 
 import { OAuthProvider, ProfileDTO } from "@/types/globals";
+import { openOAuthPopup } from "@/lib/oauth-popup";
 import { fetcher } from "@/lib/helpers";
 
 const providers: {
@@ -24,19 +26,27 @@ const providers: {
   {
     name: "Google",
     provider: "google",
-    icon: <img src="/icons/google-logo.svg" className="w-4 h-4" alt="Google Logo" />,
+    icon: (
+      <img src="/icons/google-logo.svg" className="w-4 h-4" alt="Google Logo" />
+    ),
   },
   {
     name: "LinkedIn",
     provider: "linkedin",
     icon: (
-      <img src="/icons/linkedin-logo.svg" className="w-4 h-4" alt="Linkedin Logo" />
+      <img
+        src="/icons/linkedin-logo.svg"
+        className="w-4 h-4"
+        alt="Linkedin Logo"
+      />
     ),
   },
   {
     name: "GitHub",
     provider: "github",
-    icon: <img src="/icons/github-logo.svg" className="w-4 h-4" alt="Github Logo" />,
+    icon: (
+      <img src="/icons/github-logo.svg" className="w-4 h-4" alt="Github Logo" />
+    ),
   },
 ];
 
@@ -47,6 +57,10 @@ const AccountProfile = () => {
     isLoading,
     mutate,
   } = useSWR<ProfileDTO>("/api/user", fetcher);
+  const router = useRouter();
+  const [connectingProvider, setConnectingProvider] = useState<string | null>(
+    null
+  );
 
   const [saving, setSaving] = useState(false);
 
@@ -97,142 +111,170 @@ const AccountProfile = () => {
     }
   };
 
+  const handleConnectProvider = async (provider: OAuthProvider) => {
+    setConnectingProvider(provider);
+
+    openOAuthPopup(
+      provider,
+      "/auth/oauth-callback",
+      () => {
+        // Success callback
+        setConnectingProvider(null);
+        mutate(); // Refresh user data
+        toast.success(
+          `${
+            provider.charAt(0).toUpperCase() + provider.slice(1)
+          } connected successfully`
+        );
+      },
+      (error) => {
+        // Error callback
+        setConnectingProvider(null);
+        toast.error(error);
+      }
+    );
+  };
+
   return (
     <ScrollArea className="h-full w-full">
-    <div className="max-w-xl mx-auto py-10 px-6 space-y-10">
-      {isLoading || !user ? (
-        <p className="text-primary animate-pulse">Loading profile...</p>
-      ) : error ? (
-        <p className="text-destructive">
-          Failed to loading your profile. Please try Again Later
-        </p>
-      ) : (
-        <>
-          {/* Avatar + Basic Info */}
-          <div className="flex items-center gap-5">
-            <Avatar className="h-20 w-20">
-              {image ? (
-                <AvatarImage src={image} alt={name} />
-              ) : (
-                <AvatarFallback className="text-2xl">
-                  {name?.[0] ?? "U"}
-                </AvatarFallback>
-              )}
-            </Avatar>
-            <div>
-              <h2 className="text-2xl font-semibold">{name}</h2>
-              <p className="text-muted-foreground">{user?.email}</p>
-            </div>
-          </div>
-
-          {/* Editable Personal Information */}
-          <div className="bg-white rounded-lg shadow-sm p-6 space-y-5">
-            <h3 className="font-medium text-lg">Personal Information</h3>
-
-            <div className="space-y-2">
-              <Label htmlFor="name">Full Name</Label>
-              <Input
-                id="name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+      <div className="max-w-xl mx-auto py-10 px-6 space-y-10">
+        {isLoading || !user ? (
+          <p className="text-primary text-center animate-pulse">
+            Loading your profile...
+          </p>
+        ) : error ? (
+          <p className="text-destructive">
+            Failed to loading your profile. Please try Again Later
+          </p>
+        ) : (
+          <>
+            {/* Avatar + Basic Info */}
+            <div className="flex items-center gap-5">
+              <Avatar className="h-20 w-20">
+                {image ? (
+                  <AvatarImage src={image} alt={name} />
+                ) : (
+                  <AvatarFallback className="text-2xl">
+                    {name?.[0] ?? "U"}
+                  </AvatarFallback>
+                )}
+              </Avatar>
+              <div>
+                <h2 className="text-2xl font-semibold">{name}</h2>
+                <p className="text-muted-foreground">{user?.email}</p>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>Email</Label>
-              <Input
-                value={user?.email ?? ""}
-                disabled
-                className="cursor-not-allowed bg-muted"
-              />
+            {/* Editable Personal Information */}
+            <div className="bg-white rounded-lg shadow-sm p-6 space-y-5">
+              <h3 className="font-medium text-lg">Personal Information</h3>
+
+              <div className="space-y-2">
+                <Label htmlFor="name">Full Name</Label>
+                <Input
+                  id="name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label>Email</Label>
+                <Input
+                  value={user?.email ?? ""}
+                  disabled
+                  className="cursor-not-allowed bg-muted"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="jobTitle">Job Title</Label>
+                <Input
+                  id="jobTitle"
+                  value={jobTitle}
+                  onChange={(e) => setJobTitle(e.target.value)}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="phone">Phone Number</Label>
+                <Input
+                  id="phone"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
+
+              <Button onClick={handleSave} disabled={saving}>
+                {saving ? "Saving…" : "Save Changes"}
+              </Button>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="jobTitle">Job Title</Label>
-              <Input
-                id="jobTitle"
-                value={jobTitle}
-                onChange={(e) => setJobTitle(e.target.value)}
-              />
+            {/* Account Info */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h3 className="font-medium text-lg mb-4">Account Details</h3>
+              <div className="space-y-2 text-sm">
+                <p>
+                  <span className="text-muted-foreground">Member since:</span>{" "}
+                  {user
+                    ? moment(user.createdAt).local().format("D MMMM YYYY")
+                    : "-"}
+                </p>
+                <p>
+                  <span className="text-muted-foreground">Last login:</span>{" "}
+                  {user?.lastLogin
+                    ? moment(user.lastLogin).local().format("D MMMM YYYY hh:mm")
+                    : "-"}
+                </p>
+              </div>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="phone">Phone Number</Label>
-              <Input
-                id="phone"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </div>
+            {/* Connected Accounts */}
+            <div className="bg-white rounded-lg shadow-sm p-6">
+              <h3 className="font-medium text-lg mb-4">Connected Accounts</h3>
 
-            <Button onClick={handleSave} disabled={saving}>
-              {saving ? "Saving…" : "Save Changes"}
-            </Button>
-          </div>
+              {providers.map(({ name, provider, icon }) => {
+                const isConnected =
+                  user?.connectedProviders?.includes(provider);
+                const isConnecting = connectingProvider === provider;
 
-          {/* Account Info */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="font-medium text-lg mb-4">Account Details</h3>
-            <div className="space-y-2 text-sm">
-              <p>
-                <span className="text-muted-foreground">Member since:</span>{" "}
-                {user
-                  ? moment(user.createdAt).local().format("D MMMM YYYY")
-                  : "-"}
-              </p>
-              <p>
-                <span className="text-muted-foreground">Last login:</span>{" "}
-                {user?.lastLogin
-                  ? moment(user.lastLogin).local().format("D MMMM YYYY hh:mm")
-                  : "-"}
-              </p>
-            </div>
-          </div>
+                return (
+                  <div key={provider}>
+                    <div className="flex items-center justify-between py-2">
+                      <div className="flex items-center gap-2">
+                        {icon}
+                        <p>{name}</p>
+                      </div>
 
-          {/* Connected Accounts */}
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <h3 className="font-medium text-lg mb-4">Connected Accounts</h3>
-
-            {providers.map(({ name, provider, icon }) => {
-              const isConnected = user?.connectedProviders?.includes(provider);
-              return (
-                <div key={provider}>
-                  <div className="flex items-center justify-between py-2">
-                    <div className="flex items-center gap-2">
-                      {icon}
-                      <p>{name}</p>
+                      {isConnected ? (
+                        <Button variant="secondary" size="sm" disabled>
+                          Connected
+                        </Button>
+                      ) : (
+                        <Button
+                          size="sm"
+                          onClick={() => handleConnectProvider(provider)}
+                          disabled={isConnecting || !!connectingProvider}
+                        >
+                          {isConnecting ? "Connecting..." : "Connect"}
+                        </Button>
+                      )}
                     </div>
-
-                    {isConnected ? (
-                      <Button variant="secondary" size="sm" disabled>
-                        Connected
-                      </Button>
-                    ) : (
-                      <Button
-                        size="sm"
-                        onClick={() =>
-                          signIn(provider, { callbackUrl: "/account/profile" })
-                        }
-                      >
-                        Connect
-                      </Button>
-                    )}
+                    <Separator />
                   </div>
-                  <Separator />
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
 
-          {/* Security / Danger Zone */}
-          <div>
-            <Button variant="destructive" className="w-fit">
-              Delete Account
-            </Button>
-          </div>
-        </>
-      )}
-    </div>
+            {/* Security / Danger Zone */}
+            <div>
+              <Button variant="destructive" className="w-fit">
+                Delete Account
+              </Button>
+            </div>
+          </>
+        )}
+      </div>
     </ScrollArea>
   );
 };
