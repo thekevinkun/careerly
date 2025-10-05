@@ -82,3 +82,9 @@ export interface ProfileDTO {
   connectedProviders: OAuthProvider[];
   accounts?: { provider: string; providerAccountId: string }[];
 };
+
+export interface DeleteAccountDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  hasPassword: boolean;
+}
