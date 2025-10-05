@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/ClientDialog";
+} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
@@ -29,6 +29,12 @@ const AiResultDialog = ({
   const [coverState, setCoverState] = useState<"idle" | "loading" | "saved">(
     "idle"
   );
+
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleCopy = (text: string, section: "resume" | "cover") => {
     navigator.clipboard.writeText(text);
@@ -80,6 +86,14 @@ const AiResultDialog = ({
       setCoverState("idle");
     }
   };
+
+  if (!mounted) {
+    return (
+      <p>
+        AI Suggestion
+      </p>
+    );
+  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
