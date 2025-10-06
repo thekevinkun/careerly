@@ -27,7 +27,7 @@ import {
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { toast } from "sonner"
-import moment from "moment";
+import { format } from "date-fns";
 
 const AddJobForm = () => {
   const router = useRouter();
@@ -147,7 +147,7 @@ const AddJobForm = () => {
                   className="w-full justify-start text-left font-normal !border-muted-foreground/40 focus:!border-primary"
                 >
                   <CalendarIcon className="mr-2 h-4 w-4" />
-                  {appliedAt ? moment(appliedAt).format("MMM D, YYYY") : "Pick a date"}
+                  {appliedAt ? format(new Date(appliedAt), "MMM D, yyyy") : "Pick a date"}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0 bg-card shadow-md rounded-xl border">

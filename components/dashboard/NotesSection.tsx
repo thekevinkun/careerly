@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import moment from "moment";
+import { format } from "date-fns";
 import useSWR from "swr";
 
 import { Trash2 } from "lucide-react";
@@ -113,7 +113,7 @@ const NotesSection = ({ selectedJobId }: { selectedJobId?: string | null}) => {
                       <TableRow key={note.id}>
                         <TableCell>{note.note}</TableCell>
                         <TableCell className="text-end text-muted-foreground">
-                          {moment(note.createdAt).format("MMM D, YYYY")}
+                          {format(new Date(note.createdAt), "MMM d, yyyy")}
                         </TableCell>
                         <TableCell className="!p-1.5 !pr-2.5 text-end !w-0">
                           <Button

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import useSWR from "swr";
-import moment from "moment";
+import { format } from "date-fns";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -239,8 +239,8 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
                 {job.status[0].toUpperCase() + job.status.slice(1)}
               </span>
               <span className="text-sm text-muted-foreground">
-                Applied{" "}
-                {moment(job.appliedAt).local().format("DD MMMM YYYY HH:mm")}
+                Applied
+                {job.appliedAt ? format(new Date(job.appliedAt), "dd MMMM yyyy HH:mm") : "-"}
               </span>
             </div>
 
@@ -336,7 +336,7 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
 
                           <div className="flex items-center">
                             <span className="text-end text-xs text-muted-foreground">
-                              {moment(note.createdAt).format("MMM D, YYYY")}
+                              {format(new Date(note.createdAt), "MMM D, YYYY")}
                             </span>
                           </div>
                         </div>

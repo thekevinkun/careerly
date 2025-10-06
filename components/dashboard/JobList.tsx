@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSWRConfig } from "swr";
-import moment from "moment";
+import { format } from "date-fns";
 
 import { Eye, Pencil, Check, Trash2, X } from "lucide-react";
 
@@ -164,7 +164,7 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
                     </div>
                     <div className="flex-1 min-w-[100px] text-right">
                       {job.appliedAt
-                        ? moment(job.appliedAt).local().format("MMM D, YYYY")
+                        ? format(new Date(job.appliedAt), "MMM d, yyyy")
                         : "-"}
                     </div>
                   </div>
@@ -309,7 +309,7 @@ const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {
 
                 <div className="hidden md:block">
                   {job.appliedAt
-                    ? moment(job.appliedAt).local().format("MMM D, YYYY")
+                    ? format(new Date(job.appliedAt), "MMM d, yyyy")
                     : "-"}
                 </div>
 

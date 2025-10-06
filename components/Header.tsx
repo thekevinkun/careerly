@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import moment from "moment";
+import { format } from "date-fns";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -72,7 +72,7 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
         }
 
         <span className="text-sm text-muted-foreground hidden md:block">
-          {moment(currentTime).format("dddd, D MMM YYYY · hh:mm")}
+          {format(currentTime, "EEEE, d MMM yyyy · hh:mm a")}
         </span>
 
         <DropdownMenu>

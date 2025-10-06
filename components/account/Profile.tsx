@@ -1,9 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import useSWR from "swr";
-import moment from "moment";
+import { format } from "date-fns";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
@@ -227,15 +226,13 @@ const AccountProfile = () => {
                   <p>
                     <span className="text-muted-foreground">Member since:</span>{" "}
                     {user
-                      ? moment(user.createdAt).local().format("D MMMM YYYY")
+                      ? format(new Date(user.createdAt), "d MMMM yyyy")
                       : "-"}
                   </p>
                   <p>
                     <span className="text-muted-foreground">Last login:</span>{" "}
                     {user?.lastLogin
-                      ? moment(user.lastLogin)
-                          .local()
-                          .format("D MMMM YYYY hh:mm")
+                      ? format(new Date(user.lastLogin), "d MMMM yyyy 'at' hh:mm a")
                       : "-"}
                   </p>
                 </div>
