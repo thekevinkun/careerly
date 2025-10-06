@@ -2,20 +2,15 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { CheckCircle, Mail } from "lucide-react";
 
-const RegisterPage = () => {
-  const router = useRouter();
-  const [name, setName] = useState("");
+const ForgotPassword = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -23,46 +18,30 @@ const RegisterPage = () => {
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-
-    if (!name || name.trim().length < 3) {
-      setError("Name must be at least 3 characters long");
-      return;
-    }
+    setLoading(true);
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setError("You enter invalid email address");
+      setError("Please enter a valid email address");
+      setLoading(false);
       return;
     }
 
-    if (!password || password.length < 8) {
-      setError("Password must be at least 8 characters long");
-      return;
-    }
-
-    setLoading(true);
     try {
-      const res = await fetch("/api/auth/register", {
+      const res = await fetch("/api/auth/forgot-password", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ email }),
       });
 
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(
-          data.error || "Registration failed. Please try again later."
-        );
+        throw new Error(data.error || "Failed to send reset email");
       }
 
       setSuccess(true);
-    } catch (err: unknown) {
-      console.error("Registration error:", err);
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Something went wrong. Please try again later."
-      );
+    } catch (err: any) {
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -73,27 +52,28 @@ const RegisterPage = () => {
       <div className="min-h-screen flex-center bg-muted/30 p-4">
         <Card className="w-full max-w-md bg-card shadow-xl rounded-lg border border-muted">
           <CardHeader>
-            <h2 className="logo text-2xl text-center">Careerly</h2>
+            <h2 className="logo text-2xl font-bold text-center">Careerly</h2>
           </CardHeader>
           <CardContent className="text-center space-y-4">
             <CheckCircle className="h-16 w-16 mx-auto text-green-500" />
             <h3 className="text-xl font-semibold">Check Your Email!</h3>
             <p className="text-muted-foreground">
-              We've sent a verification link to <strong>{email}</strong>
+              If an account exists for <strong>{email}</strong>, you will
+              receive a password reset link shortly.
             </p>
             <Alert>
               <Mail className="h-4 w-4" />
               <AlertDescription>
-                Please check your inbox and click the verification link to
-                activate your account.
+                The link will expire in 1 hour. Check your spam folder if you
+                don't see it.
               </AlertDescription>
             </Alert>
             <Button
-              onClick={() => router.push("/login")}
+              onClick={() => (window.location.href = "/login")}
               variant="outline"
               className="w-full"
             >
-              Go to Login
+              Back to Login
             </Button>
           </CardContent>
         </Card>
@@ -105,42 +85,25 @@ const RegisterPage = () => {
     <div className="min-h-screen flex-center bg-muted/30 p-4">
       <Card className="w-full max-w-md bg-card shadow-xl rounded-lg border border-muted">
         <CardHeader>
-          <h2 className="logo text-2xl text-center">Careerly</h2>
-
+          <h2 className="logo text-2xl font-bold text-center">Careerly</h2>
           <p className="text-sm text-muted-foreground text-center mt-1">
-            Start your journey with{" "}
-            <span className="font-semibold">Careerly</span>
+            Reset your password
           </p>
         </CardHeader>
-
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
-              <Input
-                id="name"
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-            </div>
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
                 type="email"
+                placeholder="Enter your email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
+              <p className="text-xs text-muted-foreground">
+                We'll send you a link to reset your password
+              </p>
             </div>
 
             {error && (
@@ -149,17 +112,13 @@ const RegisterPage = () => {
               </Alert>
             )}
 
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-primary text-primary-foreground hover:opacity-90"
-            >
-              {loading ? "Creating..." : "Create Account"}
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? "Sending..." : "Send Reset Link"}
             </Button>
           </form>
 
           <p className="mt-4 text-center text-sm text-muted-foreground">
-            Already have an account?{" "}
+            Remember your password?{" "}
             <Link href="/login" className="text-primary hover:underline">
               Log in
             </Link>
@@ -170,4 +129,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default ForgotPassword;

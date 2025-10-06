@@ -6,6 +6,8 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import type { SignInResponse } from "next-auth/react";
+
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -34,7 +36,7 @@ const LoginPage = () => {
       if (result?.ok) {
         router.push("/dashboard");
       } else {
-        setError(
+        throw new Error(
           result?.error ||
             "Something went wrong while you're login. Please try again later."
         );
@@ -72,7 +74,7 @@ const LoginPage = () => {
     <div className="min-h-screen flex-center bg-muted/30 p-4">
       <Card className="w-full max-w-md bg-card shadow-xl rounded-lg border border-muted">
         <CardHeader>
-          <h2 className="logo text-2xl font-bold text-center">Careerly</h2>
+          <h2 className="logo text-2xl text-center">Careerly</h2>
           <p className="text-sm text-muted-foreground text-center mt-1">
             Continue your journey with
             <span className="font-semibold">&nbsp;Careerly</span>
@@ -90,7 +92,15 @@ const LoginPage = () => {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <div className="flex items-center justify-between">
+                <Label htmlFor="password">Password</Label>
+                <Link
+                  href="/forgot-password"
+                  className="text-xs text-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
               <Input
                 id="password"
                 type="password"
@@ -99,9 +109,9 @@ const LoginPage = () => {
               />
             </div>
             {error && (
-              <div className="text-sm text-destructive font-medium">
-                {error}
-              </div>
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
             )}
             <Button
               type="submit"
@@ -127,9 +137,9 @@ const LoginPage = () => {
             {googleLoading ? "Opening Google..." : "Continue with Google"}
           </Button>
           <p className="mt-4 text-center text-sm text-muted-foreground">
-            Don't have an account?
+            Don't have an account?&nbsp;
             <Link href="/register" className="text-primary hover:underline">
-              &nbsp;Create one
+              Create
             </Link>
           </p>
         </CardContent>

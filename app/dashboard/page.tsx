@@ -4,7 +4,7 @@ import { authOptions } from "@/lib/auth";
 
 import MainContent from "@/components/dashboard/MainContent";
 
-const DashboardPage = async () => {
+export default async function Page() {
   const session = await getServerSession(authOptions);
 
   if (!session?.user?.id) {
@@ -13,5 +13,3 @@ const DashboardPage = async () => {
 
   return <MainContent />;
 };
-
-export default DashboardPage;

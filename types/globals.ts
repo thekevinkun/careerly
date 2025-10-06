@@ -67,6 +67,11 @@ export interface CoverLetterCardProps {
 
 export type OAuthProvider = "google" | "github" | "linkedin";
 
+export interface EmailVerificationBannerProps {
+  email: string;
+  emailVerified: boolean;
+}
+
 export interface ProfileDTO {
   id: string;
   name: string;
