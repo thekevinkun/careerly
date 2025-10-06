@@ -53,7 +53,7 @@ const VerifyEmail = () => {
     <div className="min-h-screen flex-center bg-muted/30 p-4">
       <Card className="w-full max-w-md bg-card shadow-xl rounded-lg border border-muted">
         <CardHeader>
-          <h2 className="logo text-2xl font-bold text-center">Careerly</h2>
+          <h2 className="logo text-2xl text-center">Careerly</h2>
         </CardHeader>
         <CardContent className="text-center space-y-4">
           {status === "loading" && (

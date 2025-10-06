@@ -87,7 +87,7 @@ const Sidebar = () => {
     <ScrollArea className="h-full w-full bg-white/80 backdrop-blur-md shadow-sm">
       <aside className="h-full w-80 lg:w-72 flex-shrink-0 flex flex-col p-6">
         <Link href="/" className="lg:hidden">
-          <h1 className="logo text-2xl font-bold text-primary">Careerly</h1>
+          <h1 className="logo text-2xl">Careerly</h1>
         </Link>
 
         <div className="w-full hidden lg:block text-end">

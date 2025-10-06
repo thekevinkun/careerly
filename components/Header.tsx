@@ -49,7 +49,7 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
         }
 
         <Link href="/" className={`${isAccountPage ? "ml-2 lg:ml-0" : "hidden lg:block"}`}>
-          <h1 className="logo text-2xl font-bold text-primary">
+          <h1 className="logo text-2xl">
             Careerly
           </h1>
         </Link>
