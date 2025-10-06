@@ -88,11 +88,7 @@ const AiResultDialog = ({
   };
 
   if (!mounted) {
-    return (
-      <p>
-        AI Suggestion
-      </p>
-    );
+    return;
   }
 
   return (
