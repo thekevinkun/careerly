@@ -15,8 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Menu } from "lucide-react";
 
-import AddJobForm from "@/components/modals/AddJobForm";
-import LogoutButton from "./LogoutButton";
+import LogoutButton from "@/components/LogoutButton";
+import AddJobFormDialog from "@/components/dialogs/AddJobFormDialog";
 
 const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
   const router = useRouter();
@@ -66,7 +66,7 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
                 ← Back to Dashboard
               </Link>
             ) : (
-              <AddJobForm />
+              <AddJobFormDialog />
             )}
           </div>
         }

@@ -11,7 +11,7 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-import { Job, JobListProps } from "@/types/globals";
+import { Job, JobListProps } from "@/types/job";
 import { statusClass } from "@/lib/helpers";
 
 const JobList = ({ data, error, isLoading, selectedJobId }: JobListProps) => {

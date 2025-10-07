@@ -29,7 +29,7 @@ import { CalendarIcon } from "lucide-react";
 import { toast } from "sonner"
 import { format } from "date-fns";
 
-const AddJobForm = () => {
+const AddJobFormDialog = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const isOpen = searchParams.get("modal") === "add-job";
@@ -178,4 +178,4 @@ const AddJobForm = () => {
   );
 };
 
-export default AddJobForm;
+export default AddJobFormDialog;

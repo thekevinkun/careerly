@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Clipboard, Download, Trash2 } from "lucide-react";
 
-import { CoverLetterCardProps } from "@/types/globals";
+import { CoverLetterCardProps } from "@/types/job";
 import { downloadTextFile } from "@/lib/helpers";
 
 const CoverLetterCard = ({ coverLetter, index, mutate }: CoverLetterCardProps) => {

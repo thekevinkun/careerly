@@ -11,7 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-import { AiResultDialogProps } from "@/types/globals";
+import { AiResultDialogProps } from "@/types/dialog";
 
 const AiResultDialog = ({
   selectedJobId,

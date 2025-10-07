@@ -45,14 +45,6 @@ export interface JobListProps {
   selectedJobId?: string | null;
 }
 
-export interface AiResultDialogProps {
-  selectedJobId: string | null;
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  aiResult: { resume?: string | null; coverLetter?: string | null; isAiGenerated: boolean } | null;
-  mutate?: () => void;
-}
-
 export interface ResumeCardProps {
   resume: ResumeVersion;
   index: number;
@@ -65,31 +57,3 @@ export interface CoverLetterCardProps {
   mutate: () => void;
 }
 
-export type OAuthProvider = "google" | "github" | "linkedin";
-
-export interface EmailVerificationBannerProps {
-  email: string;
-  emailVerified: boolean;
-}
-
-export interface ProfileDTO {
-  id: string;
-  name: string;
-  email: string;
-  image?: string | null;
-  phone?: string | null;
-  jobTitle?: string | null;
-  linkedinUrl?: string | null;
-  githubUsername?: string | null;
-  createdAt: string;
-  lastLogin?: string | null;
-
-  connectedProviders: OAuthProvider[];
-  accounts?: { provider: string; providerAccountId: string }[];
-};
-
-export interface DeleteAccountDialogProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-  hasPassword: boolean;
-}

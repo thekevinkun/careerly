@@ -5,13 +5,15 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import useSWR from "swr";
+
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
-import AddJobForm from "@/components/modals/AddJobForm";
-import BarChartCard from "./BarChartCard";
+
+import AddJobForm from "@/components/dialogs/AddJobFormDialog";
+import BarChartCard from "@/components/dashboard/BarChartCard";
 
 import {
-  ListChecks,
   Send,
   Calendar,
   Star,
@@ -19,9 +21,8 @@ import {
   TrendingUp,
 } from "lucide-react";
 
-import { Job, JobStatus } from "@/types/globals";
+import { Job, JobStatus } from "@/types/job";
 import { fetcher } from "@/lib/helpers";
-import { ScrollArea } from "../ui/scroll-area";
 
 const initialCounts: Record<JobStatus, number> = {
   applied: 0,

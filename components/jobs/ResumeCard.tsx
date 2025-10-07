@@ -5,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Clipboard, Download, Trash2 } from "lucide-react";
 
-import { ResumeCardProps } from "@/types/globals";
+import { ResumeCardProps } from "@/types/job";
 import { downloadTextFile } from "@/lib/helpers";
 
 const ResumeCard = ({ resume, index, mutate }: ResumeCardProps) => {

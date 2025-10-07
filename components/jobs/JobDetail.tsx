@@ -11,13 +11,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
-import AiResultDialog from "@/components/modals/AiResultDialog";
+import AiResultDialog from "@/components/dialogs/AiResultDialog";
 import ResumeCard from "./ResumeCard";
 import CoverLetterCard from "./CoverLetterCard";
 
 import { Pencil, Trash2, Check, X, Sparkles } from "lucide-react";
 
-import { Job } from "@/types/globals";
+import { Job } from "@/types/job";
 import { fetcher, statusClass } from "@/lib/helpers";
 
 const JobDetail = ({ jobId }: { jobId: string }) => {

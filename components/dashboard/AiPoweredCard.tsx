@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 
-import AiResultDialog from "../modals/AiResultDialog";
+import AiResultDialog from "@/components/dialogs/AiResultDialog";
 
 const AiPoweredCard = ({
   isLoading,

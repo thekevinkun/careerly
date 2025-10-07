@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner"
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { ApplicationNote } from "@/types/globals";
+import { ApplicationNote } from "@/types/job";
 import { fetcher } from "@/lib/helpers";
 
 const NotesSection = ({ selectedJobId }: { selectedJobId?: string | null}) => {

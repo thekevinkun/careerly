@@ -9,7 +9,7 @@ import JobList from "./JobList";
 import RightPanel from "./RightPanel";
 import NotesSection from "./NotesSection";
 
-import { Job } from "@/types/globals";
+import { Job } from "@/types/job";
 import { fetcher } from "@/lib/helpers";
 
 const MainContent = () => {

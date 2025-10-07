@@ -5,7 +5,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Mail, X } from "lucide-react";
 
-import { EmailVerificationBannerProps } from "@/types/globals";
+import { EmailVerificationBannerProps } from "@/types/user";
 
 const EmailVerificationBanner = ({
   email,

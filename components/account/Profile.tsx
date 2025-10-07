@@ -12,9 +12,9 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 
-import DeleteAccountDialog from "../modals/DeleteAccountDialog";
+import DeleteAccountDialog from "@/components/dialogs/DeleteAccountDialog";
 
-import { OAuthProvider, ProfileDTO } from "@/types/globals";
+import { OAuthProvider, ProfileDTO } from "@/types/user";
 import { openOAuthPopup } from "@/lib/oauth-popup";
 import { fetcher } from "@/lib/helpers";
 
