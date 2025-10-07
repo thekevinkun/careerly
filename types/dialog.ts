@@ -11,3 +11,11 @@ export interface DeleteAccountDialogProps {
   onOpenChange: (open: boolean) => void;
   hasPassword: boolean;
 }
+
+export interface AvatarUploadDialogProps {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  currentAvatar: string | null;
+  userName: string;
+  onUploadSuccess: () => void;
+}

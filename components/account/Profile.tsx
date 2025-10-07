@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import useSWR from "swr";
 import { format } from "date-fns";
 
@@ -12,6 +13,9 @@ import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 
+import { Pencil } from "lucide-react";
+
+import AvatarUploadDialog from "@/components/dialogs/AvatarUploadDialog";
 import DeleteAccountDialog from "@/components/dialogs/DeleteAccountDialog";
 
 import { OAuthProvider, ProfileDTO } from "@/types/user";
@@ -51,6 +55,8 @@ const providers: {
 ];
 
 const AccountProfile = () => {
+  const { update: updateSession } = useSession();
+
   const {
     data: user,
     error,
@@ -61,6 +67,7 @@ const AccountProfile = () => {
     null
   );
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [avatarDialogOpen, setAvatarDialogOpen] = useState(false);
 
   const [saving, setSaving] = useState(false);
 
@@ -100,8 +107,8 @@ const AccountProfile = () => {
         throw new Error(err?.error || "Failed to update profile");
       }
 
+      await updateSession();
       await mutate();
-
       toast.success("Profile updated successfully");
     } catch (err: any) {
       console.error(err);
@@ -159,15 +166,27 @@ const AccountProfile = () => {
             <>
               {/* Avatar + Basic Info */}
               <div className="flex items-center gap-5">
-                <Avatar className="h-20 w-20">
-                  {image ? (
-                    <AvatarImage src={image} alt={name} />
-                  ) : (
-                    <AvatarFallback className="text-2xl">
-                      {name?.[0] ?? "U"}
-                    </AvatarFallback>
-                  )}
-                </Avatar>
+                <div className="relative">
+                  <Avatar className="h-20 w-20">
+                    {image ? (
+                      <AvatarImage src={image} alt={name} />
+                    ) : (
+                      <AvatarFallback className="text-2xl">
+                        {name?.[0] ?? "U"}
+                      </AvatarFallback>
+                    )}
+                  </Avatar>
+
+                  <Button
+                    size="icon"
+                    variant="secondary"
+                    className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full shadow-md cursor-pointer"
+                    onClick={() => setAvatarDialogOpen(true)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </div>
+                
                 <div>
                   <h2 className="text-2xl font-semibold">{name}</h2>
                   <p className="text-muted-foreground">{user?.email}</p>
@@ -296,6 +315,14 @@ const AccountProfile = () => {
           )}
         </div>
       </ScrollArea>
+
+      <AvatarUploadDialog
+        open={avatarDialogOpen}
+        onOpenChange={setAvatarDialogOpen}
+        currentAvatar={user?.image ?? null}
+        userName={user?.name ?? ""}
+        onUploadSuccess={() => mutate()}
+      />
 
       <DeleteAccountDialog
         open={deleteDialogOpen}

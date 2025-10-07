@@ -88,12 +88,7 @@ const DeleteAccountDialog = ({
   };
 
   if (!mounted) {
-    return (
-      <p>
-        This action cannot be undone. This will permanently delete your account
-        and remove all your data from our servers.
-      </p>
-    );
+    return;
   }
 
   return (
