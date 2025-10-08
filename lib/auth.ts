@@ -86,20 +86,37 @@ export const authOptions: AuthOptions = {
 
   callbacks: {
     async jwt({ token, user, trigger, session }) {
+      // console.log("JWT Callback - Trigger:", trigger);
+      // console.log("JWT Callback - Token before:", token);
+
       if (user) {
         token.id = user.id;
         token.image = user.image || null;
       }
 
-      // Handle session updates (when updateSession is called)
-      if (trigger === "update" && session) {
-        token.image = session.user.image;
+      // Handle manual session updates (when updateSession() is called)
+      if (trigger === "update") {
+        // console.log("Session update triggered!");
+
+        // Fetch fresh user data from database
+        const updatedUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { image: true },
+        });
+
+        if (updatedUser) {
+          token.image = updatedUser.image || null;
+        }
       }
 
+      // console.log("JWT Callback - Token after:", token);
       return token;
     },
 
     async session({ session, token }) {
+      // console.log("Session Callback - Token:", token);
+      // console.log("Session Callback - Session before:", session);
+
       if (token?.id) {
         // Fetch connected accounts
         const accounts = await prisma.account.findMany({
@@ -114,6 +131,8 @@ export const authOptions: AuthOptions = {
           connectedProviders: accounts.map((acc) => acc.provider),
         };
       }
+
+      // console.log("Session Callback - Session after:", session);
       return session;
     },
 
@@ -124,7 +143,10 @@ export const authOptions: AuthOptions = {
       }
 
       // GitHub/LinkedIn account linking - redirect to oauth-callback
-      if (url.includes("/api/auth/callback/github") || url.includes("/api/auth/callback/linkedin")) {
+      if (
+        url.includes("/api/auth/callback/github") ||
+        url.includes("/api/auth/callback/linkedin")
+      ) {
         return `${baseUrl}/auth/oauth-callback`;
       }
 

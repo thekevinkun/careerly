@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import { useSession } from "next-auth/react";
+import { Area } from "react-easy-crop";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -14,9 +15,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Trash2, Camera } from "lucide-react";
+import { Trash2, Camera, ArrowLeft } from "lucide-react";
+
+import AvatarCropper from "@/components/AvatarCropper";
 
 import { AvatarUploadDialogProps } from "@/types/dialog";
+import getCroppedImg from "@/lib/crop-image";
 
 const AvatarUploadDialog = ({
   open,
@@ -26,12 +30,16 @@ const AvatarUploadDialog = ({
   onUploadSuccess,
 }: AvatarUploadDialogProps) => {
   const { update: updateSession } = useSession();
+
   const [preview, setPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [step, setStep] = useState<"select" | "crop">("select");
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -62,21 +70,38 @@ const AvatarUploadDialog = ({
     const reader = new FileReader();
     reader.onloadend = () => {
       setPreview(reader.result as string);
+      setStep("crop");
     };
     reader.readAsDataURL(file);
   };
 
+  const handleCropComplete = (croppedArea: Area) => {
+    setCroppedAreaPixels(croppedArea);
+  };
+
   const handleUpload = async () => {
-    if (!selectedFile) return;
+    if (!preview || !croppedAreaPixels) return;
 
     setUploading(true);
     setError(null);
 
     try {
-      const formData = new FormData();
-      formData.append("avatar", selectedFile);
+      // Create cropped image blob
+      const croppedImageBlob = await getCroppedImg(preview, croppedAreaPixels);
 
-      //   console.log("Form data: ", formData);
+      // Convert blob to file
+      const croppedFile = new File(
+        [croppedImageBlob],
+        selectedFile?.name || "avatar.jpg",
+        {
+          type: "image/jpeg",
+        }
+      );
+
+      const formData = new FormData();
+      formData.append("avatar", croppedFile);
+
+      // console.log("Form data: ", formData);
 
       const res = await fetch("/api/user/avatar", {
         method: "POST",
@@ -135,8 +160,10 @@ const AvatarUploadDialog = ({
   };
 
   const resetForm = () => {
+    setStep("select");
     setPreview(null);
     setSelectedFile(null);
+    setCroppedAreaPixels(null);
     setError(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -150,72 +177,110 @@ const AvatarUploadDialog = ({
     onOpenChange(newOpen);
   };
 
+  const handleBack = () => {
+    setStep("select");
+    setPreview(null);
+    setSelectedFile(null);
+    setCroppedAreaPixels(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Change Avatar</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            {step === "crop" && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleBack}
+                className="h-8 w-8"
+              >
+                <ArrowLeft className="h-4 w-4" />
+              </Button>
+            )}
+            {step === "select" ? "Change Avatar" : "Adjust Your Photo"}
+          </DialogTitle>
           <DialogDescription>
-            Upload a new profile picture. Max size 5MB.
+            {step === "select"
+              ? "Upload a new profile picture. Max size 5MB."
+              : "Drag to reposition, use sliders to adjust"}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          {/* Current/Preview Avatar */}
-          <div className="flex justify-center">
-            <Avatar className="h-32 w-32">
-              {preview ? (
-                <AvatarImage src={preview} alt="Preview" />
-              ) : currentAvatar ? (
-                <AvatarImage src={currentAvatar} alt={userName} />
-              ) : (
-                <AvatarFallback className="text-4xl">
-                  {userName?.[0] ?? "U"}
-                </AvatarFallback>
+          {step === "select" ? (
+            <>
+              {/* Current/Preview Avatar */}
+              <div className="flex justify-center">
+                <Avatar className="h-32 w-32">
+                  {currentAvatar ? (
+                    <AvatarImage src={currentAvatar} alt={userName} />
+                  ) : (
+                    <AvatarFallback className="text-4xl">
+                      {userName?.[0] ?? "U"}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+              </div>
+
+              {/* File Input (Hidden) */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/jpg"
+                onChange={handleFileSelect}
+                className="hidden"
+              />
+
+              {/* Upload Button */}
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploading || deleting}
+                >
+                  <Camera className="h-4 w-4 mr-2" />
+                  Choose Photo
+                </Button>
+
+                {currentAvatar && (
+                  <Button
+                    type="button"
+                    variant="destructive"
+                    onClick={handleDelete}
+                    disabled={uploading || deleting}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+
+              {/* Info */}
+              <Alert>
+                <AlertDescription className="text-xs">
+                  • Recommended: Square images (400x400px or larger)
+                  <br />
+                  • Accepted formats: JPG, PNG, WebP
+                  <br />• Maximum file size: 5MB
+                </AlertDescription>
+              </Alert>
+            </>
+          ) : (
+            <>
+              {/* Cropper */}
+              {preview && (
+                <AvatarCropper
+                  image={preview}
+                  onCropComplete={handleCropComplete}
+                />
               )}
-            </Avatar>
-          </div>
-
-          {/* File Input (Hidden) */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/jpg"
-            onChange={handleFileSelect}
-            className="hidden"
-          />
-
-          {/* Upload Button */}
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              className="flex-1"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploading || deleting}
-            >
-              <Camera className="h-4 w-4 mr-2" />
-              Choose Photo
-            </Button>
-
-            {currentAvatar && !preview && (
-              <Button
-                type="button"
-                variant="destructive"
-                onClick={handleDelete}
-                disabled={uploading || deleting}
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-
-          {/* File Info */}
-          {selectedFile && (
-            <div className="text-sm text-muted-foreground">
-              <p>Selected: {selectedFile.name}</p>
-              <p>Size: {(selectedFile.size / 1024).toFixed(2)} KB</p>
-            </div>
+            </>
           )}
 
           {/* Error Message */}
@@ -224,16 +289,6 @@ const AvatarUploadDialog = ({
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           )}
-
-          {/* Info */}
-          <Alert>
-            <AlertDescription className="text-xs">
-              • Recommended: Square images (400x400px or larger)
-              <br />
-              • Accepted formats: JPG, PNG, WebP
-              <br />• Maximum file size: 5MB
-            </AlertDescription>
-          </Alert>
         </div>
 
         <DialogFooter>
@@ -244,12 +299,12 @@ const AvatarUploadDialog = ({
           >
             Cancel
           </Button>
-          {preview && (
+          {step === "crop" && (
             <Button
               onClick={handleUpload}
-              disabled={uploading || deleting || !selectedFile}
+              disabled={uploading || !croppedAreaPixels}
             >
-              {uploading ? "Uploading..." : "Upload"}
+              {uploading ? "Uploading..." : "Save Avatar"}
             </Button>
           )}
         </DialogFooter>

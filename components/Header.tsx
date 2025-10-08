@@ -77,7 +77,7 @@ const Header = ({ onMenuClick }: { onMenuClick?: () => void }) => {
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Avatar className="h-9 w-9 cursor-pointer">
+            <Avatar className="h-9 w-9 cursor-pointer" key={session?.user?.image || "no-header-avatar"}>
               {session?.user?.image ? (
                 <AvatarImage
                   src={session.user.image}

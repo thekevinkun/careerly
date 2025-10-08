@@ -167,7 +167,7 @@ const AccountProfile = () => {
               {/* Avatar + Basic Info */}
               <div className="flex items-center gap-5">
                 <div className="relative">
-                  <Avatar className="h-20 w-20">
+                  <Avatar className="h-20 w-20" key={image || "no-avatar"}>
                     {image ? (
                       <AvatarImage src={image} alt={name} />
                     ) : (
