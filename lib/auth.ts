@@ -14,6 +14,12 @@ export const authOptions: AuthOptions = {
   // DB-based sessions now
   session: {
     strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 day
+    updateAge: 30,   // Refresh daily if active
+  },
+
+  jwt: {
+    maxAge: 30 * 24 * 60 * 60, // 30 days
   },
 
   providers: [
