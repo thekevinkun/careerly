@@ -239,7 +239,7 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
                 {job.status[0].toUpperCase() + job.status.slice(1)}
               </span>
               <span className="text-sm text-muted-foreground">
-                Applied
+                Applied&nbsp;
                 {job.appliedAt ? format(new Date(job.appliedAt), "dd MMMM yyyy HH:mm") : "-"}
               </span>
             </div>
@@ -336,7 +336,7 @@ const JobDetail = ({ jobId }: { jobId: string }) => {
 
                           <div className="flex items-center">
                             <span className="text-end text-xs text-muted-foreground">
-                              {format(new Date(note.createdAt), "MMM D, YYYY")}
+                              {format(new Date(note.createdAt), "MMM d, yyyy")}
                             </span>
                           </div>
                         </div>
